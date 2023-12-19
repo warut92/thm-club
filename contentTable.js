@@ -17,6 +17,6 @@
 
 	let songNamesCont = ""
 	for (let i = 0; i < songNamesArr.length; i++) {
-		songNamesCont += "<a href=\"#" + songNamesArr[i] + "\">" + (i+1) + " " + songNamesArr[i] + "</a><br>"
+		songNamesCont += "<a href=\"#" + songNamesArr[i] + "\">" + (i+1) + ". " + songNamesArr[i] + "</a><br>"
 	}
 	document.getElementById('contentTable').innerHTML = songNamesCont;
