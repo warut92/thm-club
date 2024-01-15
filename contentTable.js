@@ -2,6 +2,9 @@
 //all str
 	let allNotes =  document.getElementById('thm').innerHTML;
 
+	//insert page tag for 
+	allNotes = allNotes.replace(/<tr><td>next<\/td><\/tr>/gm, "<page>")
+	document.getElementById('thm').innerHTML = allNotes;
 	//get all title song namesd
 	const songNames = allNotes.match(/<a name=\"[ก-๛A-z].*<\/a>/gm)
 

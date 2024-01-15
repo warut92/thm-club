@@ -1,0 +1,22 @@
+.bottomright {
+  position: -webkit-sticky;
+  position: sticky;
+  position: fixed;
+  bottom: 0;
+  right: 16px;
+  padding: 1px;
+  width: 50px;
+  background-color: yellow;
+  border: 2px solid blue;
+  font-size: 10px;
+  text-align: center;
+}
+
+@media print {
+.hidden {
+  display: none !important;
+  }
+page {
+  break-before: page;
+ }
+}
