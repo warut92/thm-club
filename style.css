@@ -11,6 +11,9 @@
   font-size: 10px;
   text-align: center;
 }
+red {
+  color: red;
+}
 
 @media print {
 .hidden {
