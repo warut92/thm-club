@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตัวเปลี่ยนเสียงโน้ตดนตรีไทย</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .increase {
+      background-color: #4CAF50;
+    }
+
+    .increase:hover {
+      background-color: #45a049;
+    }
+
+    .decrease {
+      background-color: #d9534f;
+    }
+
+    .decrease:hover {
+      background-color: #c9302c;
+    }
+
+    .copy {
+      background-color: #008CBA;
+    }
+
+    .copy:hover {
+      background-color: #0073a6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <label for="my-textarea">ตัวเปลี่ยนเสียงโน้ตดนตรีไทย (แบบตัวเลข):</label>
+    <textarea id="my-textarea"></textarea>
+    <br>
+    <button type="button" class="decrease" onclick="decreaseDigits()">ลง 1 เสียง</button>
+    <button type="button" class="increase" onclick="incrementDigits()">ขึ้น 1 เสียง</button>
+    <button type="button" class="copy" onclick="copyText()">คัดลอกข้อความ</button>
+    <br>
+    <pre>สิ่งที่ต้องเพิ่มเติม
+        1. ตัวแปลงเลข 8, 9
+        2. ตัวแปลงแบบ 12 ครึ่งเสียง
+    </code>
+  </div>
+
+  <script>
+    function incrementDigits() {
+      let textarea = document.getElementById("my-textarea");
+      let text = textarea.value;
+        
+      let newText = text.replace(/\d/g, function(match) {
+        let num = parseInt(match);
+        return num === 7 ? '1' : (num + 1);
+      });
+
+      textarea.value = newText;
+    }
+
+    function decreaseDigits() {
+      let textarea = document.getElementById("my-textarea");
+      let text = textarea.value;
+
+      let newText = text.replace(/\d/g, function(match) {
+        let num = parseInt(match);
+        return num === 1 ? '7' : (num - 1);
+      });
+
+      textarea.value = newText;
+    }
+
+    function copyText() {
+      let textarea = document.getElementById("my-textarea");
+      textarea.select();
+      document.execCommand("copy");
+      alert("คัดลอกข้อความเรียบร้อย!"); // Show alert message
+    }
+  </script>
+</body>
+</html>
