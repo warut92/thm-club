@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+		<title>รวมโน้ตชมรมดนตรีไทย ชสว.</title>
+    <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
+		<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+รวมโน้ตชมรมดนตรีไทย ชสว.<br>
+<a href="./index.html" class="hidden">หน้าหลัก</a>
+<hr>
+รำวงวันลอยกระทง
+<hr>
+<a name="#contentTable" class="hidden">สารบัญ</a>
+<div id="contentTable" class="hidden"></div>
+<div id="thm">
+(รำวงวันลอยกระทง)
+([ท่อน_%1])
+---- -5-5 --35 -6-8 ---9 -8-6 ---5 -5-3
+---5 -6-8 ---6 -8-- -5-6 -8-9 -8-6 -5-5
+---- ---8 ---8 -8-8 ---- ---5 ---5 -5-5
+---8 -8-8 ---9 -3*-- -3*-9 -8-6 -5-6 -8-9
+---- -3*-3* -3*-3* -3*-3* ---- -8-8 -8-8 -8-8
+---8 -6-5 --68 -6-8 ---8 -6-5 --68 -6-8
+</div>
+<div class="hidden">
+	<div class="bottomright"><a href="#contentTable">สารบัญ</a></div>
+	ปรับปรุงล่าสุดเมื่อ: <span id="date"></span>
+</div>
+</body>
+<script src="https://warut92.github.io/thmjs/thm.js@0.0.1"></script>
+<script src="./contentTable.js"></script>
+<script type="text/javascript">
+	let date = document.lastModified
+	document.getElementById('date').innerHTML = "<small>" + date + "</small";
+</script>
+</html>

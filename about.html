@@ -21,5 +21,19 @@
    <a href="https://note.warut.net">note.warut.net</a>
    <br> 
    <span>เว็บไซต์รวบรวมโน้ตดนตรีไทยของครูวรุฒ</span>
+   <div style="display: flex; justify-content: center; align-items: center; height: 50;">
+    <div id="qrcode"></div>
+  </div>
+   <script>
+    // Create QR code in the "qrcode" div
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://note.warut.net",
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
 </body>
 </html>

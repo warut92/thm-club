@@ -23,3 +23,23 @@
 		songNamesCont += "<a href=\"#" + songNamesArr[i] + "\">" + (i+1) + ". " + songNamesArr[i] + "</a><br>"
 	}
 	document.getElementById('contentTable').innerHTML = songNamesCont;
+
+
+	        // Get all HR elements
+			const hrs = document.querySelectorAll('hr');
+
+			if (hrs.length >= 2) {
+				// Get all nodes between first and second <hr>
+				let textBetween = '';
+				let node = hrs[0].nextSibling;
+	
+				while (node && node !== hrs[1]) {
+					if (node.nodeType === Node.TEXT_NODE) {
+						textBetween += node.textContent.trim() + ' ';
+					}
+					node = node.nextSibling;
+				}
+	
+				console.log(textBetween.trim());
+				document.title = textBetween + "(โน้ตดนตรีไทย ชมรมดนตรีไทย ชสว)";
+			}
