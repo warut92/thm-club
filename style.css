@@ -2,8 +2,8 @@
   position: -webkit-sticky;
   position: sticky;
   position: fixed;
-  bottom: 0;
-  right: 16px;
+  top: 0;
+  right: 0px;
   padding: 1px;
   width: 50px;
   background-color: yellow;
