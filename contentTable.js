@@ -43,3 +43,4 @@
 		// console.log(textBetween.trim());
 		document.title = textBetween + "(โน้ตดนตรีไทย ชมรมดนตรีไทย ชสว)";
 	}
+	

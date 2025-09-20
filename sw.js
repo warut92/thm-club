@@ -27,6 +27,7 @@ self.addEventListener('install', (e) => {
         './basic/sathukan.html',
         './basic/so-daung.html',
         './basic/so-u.html',
+        './basic/sathukarn.html',
         './competition/a-nu.html',
         './competition/ramwong_rayong.html',
         './competition/sornthong67.html',
@@ -67,7 +68,6 @@ self.addEventListener('install', (e) => {
         './tmw/index.html',
       ])),
     );
-    alert("ดาวน์โหลดโน้ตออฟไลน์เรียบร้อยครับ")
   });
   
   self.addEventListener('fetch', (e) => {

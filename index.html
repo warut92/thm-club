@@ -21,6 +21,7 @@
 4. <a href="./basic/so-u.html">ซออู้</a><br>
 5. <a href="./basic/khim.html">ขิม</a><br>
 6. <a href="./basic/pii-nai.html">ปีใน</a><br>
+7. <a href="./basic/sathukarn.html">โน้ตเพลงปี่พาทย์</a><br>
 <hr>
 🏍️เพลงไล่มือ<br>
 <a href="./exercise/jorakehangyao.html">จระเข้หางยาว_สามชั้น_เครื่องสาย</a><br>
@@ -90,6 +91,14 @@
 <script type="text/javascript">
 	let date = document.lastModified
 	document.getElementById('date').innerHTML = "<small>" + date + "</small>";
+
+	// Register service worker to control making site work offline
+
+	if ('serviceWorker' in navigator) {
+	navigator.serviceWorker
+		.register('./sw.js')
+		.then(() => { alert('ดาวน์โหลดโน้ตออฟไลน์เรียบร้อยครับ'); });
+	}
 </script>
   </body>
 </html>
