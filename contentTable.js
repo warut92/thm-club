@@ -44,16 +44,14 @@
 		document.title = textBetween + "(โน้ตดนตรีไทย ชมรมดนตรีไทย ชสว)";
 	}
 	
-
- 
 	 const increaseBtn = document.createElement("button");
 	 increaseBtn.className = "increaseBtn";
-	 increaseBtn.textContent = "A+";
+	 increaseBtn.textContent = "ก+";
 	 document.body.appendChild(increaseBtn);
  
 	 const decreaseBtn = document.createElement("button");
 	 decreaseBtn.className = "decreaseBtn";
-	 decreaseBtn.textContent = "A-";
+	 decreaseBtn.textContent = "ก-";
 	 document.body.appendChild(decreaseBtn);
  
 	 // === LOAD FONT SIZE FROM localStorage ===
