@@ -11,6 +11,21 @@
   font-size: 20px;
   text-align: center;
 }
+
+#dateTime {
+  position: -webkit-sticky;
+  position: sticky;
+  position: fixed;
+  top: 0;
+  right: 0px;
+  padding: 1px;
+  width: 300px;
+  background-color: yellow;
+  border: 2px solid blue;
+  font-size: 18px;
+  text-align: center;
+}
+
 red {
   color: red;
 }

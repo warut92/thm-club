@@ -91,10 +91,23 @@
 <a href="about.html">เกี่ยวกับเว็บไซต์นี้</a>
 <hr>
 ปรับปรุงล่าสุดเมื่อ: <span id="date"></span>
+<div class="bottomright" id="dateTime"></div>
 <script src="/fontSize.js"></script>
+<script>
+const fullDate = new Date();
+const options = {
+  weekday: 'long',
+  month: 'long',
+  day: 'numeric',
+};
+
+let FULLYEAR = fullDate.getFullYear() + 543
+document.getElementById("dateTime").innerHTML = fullDate.toLocaleDateString('th-TH', options) + " พ.ศ. " + FULLYEAR;
+
+</script>
 <script type="text/javascript">
-	let date = document.lastModified
-	document.getElementById('date').innerHTML = "<small>" + date + "</small>";
+	let dateLastModified = document.lastModified
+	document.getElementById('date').innerHTML = "<small>" + dateLastModified + "</small>";
 
 	// Register service worker to control making site work offline
 
