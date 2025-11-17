@@ -1,0 +1,31 @@
+{
+	"เพิ่มวันที่และเวลา": {
+    	"prefix": "/t",
+    	"body": [
+        "([$CURRENT_DATE-$CURRENT_MONTH-$CURRENT_YEAR $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND)]",
+    	],
+		"description": "เพิ่มวันที่เวลา"
+	},
+	"red": {
+    	"prefix": "/r",
+    	"body": [
+        "<red>$1",
+    	],
+		"description": "tag สีแดง"
+	},
+	"green": {
+    	"prefix": "/g",
+    	"body": [
+        "<green>$1",
+    	],
+		"description": "tag เขียว"
+	},
+		"italic": {
+    	"prefix": "/i",
+    	"body": [
+        "<i>$1",
+    	],
+		"description": "tag italic"
+	}
+
+}
