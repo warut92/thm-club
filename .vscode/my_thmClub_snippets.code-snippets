@@ -26,6 +26,13 @@
         "<i>$1",
     	],
 		"description": "tag italic"
+	},
+	"slash": {
+    	"prefix": "/",
+    	"body": [
+        "//",
+    	],
+		"description": "tag italic"
 	}
 
 }
