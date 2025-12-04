@@ -1,6 +1,7 @@
-self.addEventListener('install', (e) => {
-    e.waitUntil(
-      caches.open('note.warut.net').then((cache) => cache.addAll([
+self.addEventListener("install", e => {
+  e.waitUntil(
+    caches.open("v1").then(cache => {
+      return cache.addAll([
         '/0-blank_tmp.html',
         '/9noteConverter.js',
         '/about.html',
@@ -65,14 +66,19 @@ self.addEventListener('install', (e) => {
         '/teaching/longmeaping.html',
         '/teaching/loy-krathong.html',
         '/teaching/pamaklonyaw.html',
-        '/tmw/index.html',
-      ])),
-    );
-  });
+        "/index.html"
+      ]);
+    })
+    .catch(err => {
+      console.error("Cache failed:", err);
+    })
+  );
+});
   
-  self.addEventListener('fetch', (e) => {
-    console.log(e.request.url);
+  self.addEventListener("fetch", e => {
     e.respondWith(
-      caches.match(e.request).then((response) => response || fetch(e.request)),
+      caches.match(e.request).then(resp => {
+        return resp || fetch(e.request);
+      })
     );
   });
