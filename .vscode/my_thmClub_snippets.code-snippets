@@ -33,6 +33,13 @@
         "//",
     	],
 		"description": "tag italic"
+	},
+	"subtitle": {
+    	"prefix": "/s",
+    	"body": [
+        "([$1])",
+    	],
+		"description": "tag italic"
 	}
 
 }
