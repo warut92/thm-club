@@ -9,7 +9,7 @@
 	"red": {
     	"prefix": "/r",
     	"body": [
-        "<red>$1",
+        "<red>$1</red>",
     	],
 		"description": "tag สีแดง"
 	},
