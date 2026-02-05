@@ -4,14 +4,15 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-	<title>รวมโน้ตชมรมดนตรีไทย ชสว.</title>
+	<title>เพลงสอนนักเรียนในรายวิชา - รวมโน้ตชมรมดนตรีไทย ชสว.</title>
     <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 	<link rel="manifest" href="manifest.webmanifest">	
 	<link rel="shortcut icon" href="./img/icon.png" type="image/x-icon">
 </head>
 <body>
-    
+	<a href="../index.html" class="hidden">หน้าหลัก</a>
+	<hr>   
 🧑‍🏫 เพลงสอนนักเรียนในรายวิชา<br>
 <a href="./laosiengtain.html">ลาวเสี่ยงเทียน 2 ชั้น (อังกะลุง)</a><br>
 <a href="./pamaklonyaw.html">พม่ากลองยาว</a><br>
@@ -27,5 +28,19 @@
 <a href="./noksai.html">เพลงนกไซบินข้ามทุ่ง สำหรับอังกะลุง</a><br>
 <a href="./flute_lesson.html">บทเรียนขลุ่ยเพียงออ</a><br></div>
 </details>
+<div class="bottomright" id="dateTime"></div>
 </body>
+<script src="../fontSize.js"></script>
+<script>
+	const fullDate = new Date();
+	const options = {
+	  weekday: 'long',
+	  month: 'long',
+	  day: 'numeric',
+	};
+	
+	let FULLYEAR = fullDate.getFullYear() + 543
+	document.getElementById("dateTime").innerHTML = fullDate.toLocaleDateString('th-TH', options) + " พ.ศ. " + FULLYEAR;
+	
+	</script>
 </html>

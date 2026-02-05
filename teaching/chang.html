@@ -5,10 +5,10 @@
 
 		<title>โน้ตดนตรี>>วิชา ศิลปะประยุกต์ (อังกะลุง) (ศ21201)</title>
     <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
-
+		<link rel="stylesheet" href="../style.css">
 </head>
 <body>
-แบบฝึกหัด "การไล่เสียงอังกะลุง" ที่ ๑ <br>
+โน้ตดนตรีไทย เพลงช้าง เพลงฟ้อนเงี้ยว เพลงเต้ยโขง<br>
 <a name="#contentTable" class="hidden">สารบัญ</a>
 <div id="contentTable" class="hidden"></div>
 <div id="thm">
@@ -35,9 +35,23 @@
 ---1 -2-3 -2-1 -5-6 ---1 -2-3 -2-1 -5-6
 //
 </div>
+<div class="bottomright" id="dateTime"></div>
 </body>
 <script src="https://warut92.github.io/thmjs/thm.js@0.0.1"></script>
 <script src="../contentTable.js"></script>
+<script src="../fontSize.js"></script>
+<script>
+	const fullDate = new Date();
+	const options = {
+	  weekday: 'long',
+	  month: 'long',
+	  day: 'numeric',
+	};
+	
+	let FULLYEAR = fullDate.getFullYear() + 543
+	document.getElementById("dateTime").innerHTML = fullDate.toLocaleDateString('th-TH', options) + " พ.ศ. " + FULLYEAR;
+	
+	</script>
 <script type="text/javascript">
 	let date = document.lastModified
 	document.getElementById('date').innerHTML = "<small>" + date + "</small";
