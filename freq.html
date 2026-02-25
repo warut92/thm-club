@@ -28,18 +28,29 @@
 <body>
 
 <h2>ตารางแสดงความถี่เสียงในดนตรีไทย (เสียงกรมศิลป์)</h2>
+<button class="ratioBtn" data-ids="5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26">ระนาดเอก</button>
+<button class="ratioBtn" data-ids="3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">ระนาดทุ้ม</button>
+<button class="ratioBtn" data-ids="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ฆ้องวงใหญ่</button>
+<button class="ratioBtn" data-ids="14,15,16,17">ฆ้องวงเล็ก</button>
+<button class="ratioBtn" data-ids="15,12,8">จะเข้</button>
+<button class="ratioBtn" data-ids="12,16">ซอด้วง</button>
+<button class="ratioBtn" data-ids="8,12">ซออู้</button>
+<button class="ratioBtn" data-ids="">ซอสามสาย</button>
+<button class="ratioBtn" data-ids="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ขลุ่ยเพียงออ</button>
+<button class="ratioBtn" data-ids="23">กลองสองหน้า</button>
 
+<button onclick="showAll()">แสดงทั้งหมด</button>
 <table id="noteTable">
   <thead>
     <tr>
       <th>ชื่อโน้ต</th>
-      <th>ระดับ</th>
+      <th>ช่วงเสียงที่</th>
       <th>ความถี่ (Hz)</th>
     </tr>
   </thead>
   <tbody></tbody>
 </table>
-<code>([25-02-2026 07:47:33)]</code>
+<code>[25-02-2026 07:47:33]</code>
 <script>
 const data = `
 โด	0	115.2
@@ -81,10 +92,13 @@ const data = `
 
 const tbody = document.querySelector("#noteTable tbody");
 
-data.trim().split("\n").forEach(line => {
+data.trim().split("\n").forEach((line, index) => {
   const [note, level, freq] = line.split(/\s+/);
 
   const tr = document.createElement("tr");
+
+  tr.id = index + 1
+
   tr.innerHTML = `
     <td>${note}</td>
     <td>${level}</td>
@@ -94,7 +108,7 @@ data.trim().split("\n").forEach(line => {
   tr.addEventListener("click", () => {
     playTone(parseFloat(freq));
   });
-  tr.addEventListener("touch", () => {
+  tr.addEventListener("touchstart", () => {
     playTone(parseFloat(freq));
   });
   tbody.appendChild(tr);
@@ -117,6 +131,31 @@ function playTone(frequency) {
   gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
 
   oscillator.stop(audioCtx.currentTime + 1);
+}
+
+document.querySelectorAll(".ratioBtn").forEach(button => {
+  button.addEventListener("click", () => {
+    const idArray = button.dataset.ids
+      .split(",")
+      .map(n => parseInt(n.trim()));
+
+    filterRows(idArray);
+  });
+});
+
+function filterRows(idArray) {
+  const rows = document.querySelectorAll("#noteTable tbody tr");
+
+  rows.forEach(row => {
+    const rowId = parseInt(row.id);
+
+    row.style.display = idArray.includes(rowId) ? "" : "none";
+  });
+}
+
+function showAll() {
+  const rows = document.querySelectorAll("#noteTable tbody tr");
+  rows.forEach(row => row.style.display = "");
 }
 </script>
 
