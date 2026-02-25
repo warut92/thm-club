@@ -1,11 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางแสดงความถี่ดนตรีไทย</title>
+<meta charset="UTF-8">
+<title>Thai Notes Frequency Table</title>
+<link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
+
+<style>
+  table {
+    border-collapse: collapse;
+    width: 500px;
+  }
+  th, td {
+    border: 1px solid #999;
+    padding: 8px;
+    text-align: center;
+  }
+  tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  th {
+    background-color: #ddd;
+  }
+</style>
 </head>
 <body>
-กำลังสร้าง...
+
+<h2>ตารางแสดงความถี่เสียงในดนตรีไทย (เสียงกรมศิลป์)</h2>
+
+<table id="noteTable">
+  <thead>
+    <tr>
+      <th>ชื่อโน้ต</th>
+      <th>ระดับ</th>
+      <th>ความถี่ (Hz)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<code>([25-02-2026 07:47:33)]</code>
+<script>
+const data = `
+โด	0	115.2
+เร	0	127.1
+มี	0	140.4
+ฟา	0	155.0
+ซอล	0	171.1
+ลา	0	188.9
+ที	0	208.6
+โด	1	230.3
+เร	1	254.2
+มี	1	280.7
+ฟา	1	309.9
+ซอล	1	342.2
+ลา	1	377.8
+ที	2	417.2
+โด	2	460.6
+เร	2	508.4
+มี	2	561.4
+ฟา	2	619.8
+ซอล	2	684.4
+ลา	2	755.6
+ที	2	834.4
+โด	3	921.2
+เร	3	1016.8
+มี	3	1122.8
+ฟา	3	1239.6
+ซอล	3	1368.8
+ลา	3	1511.2
+ที	3	1668.8
+โด	4	1842.4
+เร	4	2033.6
+มี	4	2245.6
+ฟา	4	2479.2
+ซอล	4	2737.6
+ลา	4	3022.4
+ที	4	3337.6
+`;
+
+const tbody = document.querySelector("#noteTable tbody");
+
+data.trim().split("\n").forEach(line => {
+  const [note, level, freq] = line.split(/\s+/);
+
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${note}</td>
+    <td>${level}</td>
+    <td>${freq}</td>
+  `;
+
+  tr.addEventListener("click", () => {
+    playTone(parseFloat(freq));
+  });
+  tr.addEventListener("touch", () => {
+    playTone(parseFloat(freq));
+  });
+  tbody.appendChild(tr);
+});
+
+function playTone(frequency) {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  oscillator.start();
+
+  gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+
+  oscillator.stop(audioCtx.currentTime + 1);
+}
+</script>
+
 </body>
 </html>
