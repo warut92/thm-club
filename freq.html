@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
 
 <style>
+  button {
+    font-family: 'Tlwg Typist', monospace;
+  }
   table {
     border-collapse: collapse;
     width: 500px;
@@ -17,7 +20,8 @@
     text-align: center;
   }
   tr:hover {
-    background-color: #f0f0f0;
+    background-color: #9494ff;
+    color: white;
     cursor: pointer;
   }
   th {
@@ -35,7 +39,7 @@
 <button class="ratioBtn" data-ids="15,12,8">จะเข้</button>
 <button class="ratioBtn" data-ids="12,16">ซอด้วง</button>
 <button class="ratioBtn" data-ids="8,12">ซออู้</button>
-<button class="ratioBtn" data-ids="">ซอสามสาย</button>
+<button class="ratioBtn" data-ids="6,9,12">ซอสามสาย</button>
 <button class="ratioBtn" data-ids="15,16,17,18,19,20,21,22,23,24,25,26">ขลุ่ยเพียงออ</button>
 <button class="ratioBtn" data-ids="23">กลองสองหน้า</button>
 
@@ -67,7 +71,7 @@ const data = `
 ฟา	1	309.9
 ซอล	1	342.2
 ลา	1	377.8
-ที	2	417.2
+ที	1	417.2
 โด	2	460.6
 เร	2	508.4
 มี	2	561.4
@@ -99,7 +103,7 @@ data.trim().split("\n").forEach((line, index) => {
   const tr = document.createElement("tr");
 
   tr.id = index + 1
-
+console.log(note);
   tr.innerHTML = `
     <td>${note}</td>
     <td>${level}</td>
