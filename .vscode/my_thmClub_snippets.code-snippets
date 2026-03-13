@@ -27,19 +27,62 @@
     	],
 		"description": "tag italic"
 	},
-	"slash": {
-    	"prefix": "/",
-    	"body": [
-        "//",
-    	],
-		"description": "tag italic"
-	},
 	"subtitle": {
     	"prefix": "/s",
     	"body": [
         "([$1])",
     	],
 		"description": "tag italic"
+	},
+	"ท่อน 1": {
+    	"prefix": "/1",
+    	"body": [
+        "([ท่อน_%1])",
+    	],
+		"description": "ท่อน 1"
+	},
+	"ท่อน 2": {
+    	"prefix": "/2",
+    	"body": [
+        "([ท่อน_%2])",
+    	],
+		"description": "ท่อน 2"
+	},
+	"ท่อน 3": {
+    	"prefix": "/3",
+    	"body": [
+        "([ท่อน_%3])",
+    	],
+		"description": "ท่อน 3"
+	},
+	"ท่อน 4": {
+    	"prefix": "/4",
+    	"body": [
+        "([ท่อน_%4])",
+    	],
+		"description": "ท่อน 4"
+	},
+	"_%2_ชั้น": {
+    	"prefix": "%2",
+    	"body": [
+        "_%2_ชั้น",
+    	],
+		"description": "_%2_ชั้น"
+	}
+	,
+	"_%3_ชั้น": {
+    	"prefix": "%3",
+    	"body": [
+        "_%3_ชั้น",
+    	],
+		"description": "_%3_ชั้น"
+	},
+	"_ชั้นเดียว": {
+    	"prefix": "%1",
+    	"body": [
+        "_ชั้นเดียว",
+    	],
+		"description": "_ชั้นเดียว"
 	}
 
 }
