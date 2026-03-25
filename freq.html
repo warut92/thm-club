@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
 
 <style>
-  button {
+  button, select {
     font-family: 'Tlwg Typist', monospace;
+    font-size: 18px;
   }
   table {
     border-collapse: collapse;
@@ -32,18 +33,20 @@
 <body>
 
 <h2>ตารางแสดงความถี่เสียงในดนตรีไทย (เสียงกรมศิลป์)</h2>
-<button class="ratioBtn" data-ids="5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26">ระนาดเอก</button>
-<button class="ratioBtn" data-ids="3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">ระนาดทุ้ม</button>
-<button class="ratioBtn" data-ids="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ฆ้องวงใหญ่</button>
-<button class="ratioBtn" data-ids="14,15,16,17">ฆ้องวงเล็ก</button>
-<button class="ratioBtn" data-ids="15,12,8">จะเข้</button>
-<button class="ratioBtn" data-ids="12,16">ซอด้วง</button>
-<button class="ratioBtn" data-ids="8,12">ซออู้</button>
-<button class="ratioBtn" data-ids="6,9,12">ซอสามสาย</button>
-<button class="ratioBtn" data-ids="15,16,17,18,19,20,21,22,23,24,25,26">ขลุ่ยเพียงออ</button>
-<button class="ratioBtn" data-ids="23">กลองสองหน้า</button>
+<select id="instrumentSelect">
+  <option value="">-- เลือกเครื่องดนตรี --</option>
+  <option value="5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26">ระนาดเอก</option>
+  <option value="3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">ระนาดทุ้ม</option>
+  <option value="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ฆ้องวงใหญ่</option>
+  <option value="15,12,8">จะเข้</option>
+  <option value="12,16">ซอด้วง</option>
+  <option value="8,12">ซออู้</option>
+  <option value="6,9,12">ซอสามสาย</option>
+  <option value="15,16,17,18,19,20,21,22,23,24,25,26">ขลุ่ยเพียงออ</option>
+  <option value="23">กลองสองหน้า</option>
+</select>
 
-<button onclick="showAll()">แสดงทั้งหมด</button>
+<button onclick="toggleMode()" id="modeBtn">โหมด: เสียงสั้น</button>
 <table id="noteTable">
   <thead>
     <tr>
@@ -54,9 +57,36 @@
   </thead>
   <tbody></tbody>
 </table>
-<code>[25-02-2026 07:47:33]</code>
+<code>[25-02-2026 07:47:33] ล่าสุด: [25-03-2026 10:18:16]</code>
 
 <script>
+  document.getElementById("instrumentSelect").addEventListener("change", function () {
+  const value = this.value;
+
+  if (!value) {
+    showAll();
+    return;
+  }
+
+  const idArray = value.split(",").map(n => parseInt(n.trim()));
+  filterRows(idArray);
+});
+
+let sustainMode = false;
+let currentOsc = null;
+let currentGain = null;
+
+const tr = document.createElement("tr");
+
+function toggleMode() {
+  sustainMode = !sustainMode;
+  document.getElementById("modeBtn").innerText =
+    sustainMode ? "โหมด: เสียงยาว" : "โหมด: เสียงสั้น";
+
+  stopTone(); // กันเสียงค้าง
+}
+
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const data = `
 โด	0	115.2
 เร	0	127.1
@@ -120,7 +150,8 @@ console.log(note);
 });
 
 function playTone(frequency) {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  stopTone(); // หยุดเสียงเดิมก่อน
+
   const oscillator = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
 
@@ -132,11 +163,32 @@ function playTone(frequency) {
 
   oscillator.start();
 
-  gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+  if (sustainMode) {
+    // 🔥 โหมดยาว
+    gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
 
-  oscillator.stop(audioCtx.currentTime + 1);
+    currentOsc = oscillator;
+    currentGain = gainNode;
+  } else {
+    // ⚡ โหมดสั้น (เดิม)
+    gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+
+    oscillator.stop(audioCtx.currentTime + 1);
+  }
 }
+
+function stopTone() {
+  if (currentOsc) {
+    currentGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    currentOsc.stop(audioCtx.currentTime + 0.3);
+    currentOsc = null;
+  }
+}
+
+tr.addEventListener("mouseup", stopTone);
+tr.addEventListener("mouseleave", stopTone);
+tr.addEventListener("touchend", stopTone);
 
 document.querySelectorAll(".ratioBtn").forEach(button => {
   button.addEventListener("click", () => {
