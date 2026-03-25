@@ -21,8 +21,8 @@
     text-align: center;
   }
   tr:hover {
-    background-color: #9494ff;
-    color: white;
+    background-color: greenyellow;
+    color: black;
     cursor: pointer;
   }
   th {
@@ -35,9 +35,9 @@
 <h2>ตารางแสดงความถี่เสียงในดนตรีไทย (เสียงกรมศิลป์)</h2>
 <select id="instrumentSelect">
   <option value="">-- เลือกเครื่องดนตรี --</option>
-  <option value="5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26">ระนาดเอก</option>
-  <option value="3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">ระนาดทุ้ม</option>
-  <option value="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ฆ้องวงใหญ่</option>
+  <option value="5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26">ระนาดเอก(เครื่องสาย)</option>
+  <option value="3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">ระนาดทุ้ม(เครื่องสาย)</option>
+  <option value="10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25">ฆ้องวงใหญ่(เครื่องสาย)</option>
   <option value="15,12,8">จะเข้</option>
   <option value="12,16">ซอด้วง</option>
   <option value="8,12">ซออู้</option>
@@ -47,6 +47,7 @@
 </select>
 
 <button onclick="toggleMode()" id="modeBtn">โหมด: เสียงสั้น</button>
+<button onclick="stopTone()" id="stopBtn">หยุดเสียง</button>
 <table id="noteTable">
   <thead>
     <tr>
@@ -56,6 +57,14 @@
     </tr>
   </thead>
   <tbody></tbody>
+  <br>
+
+<button onclick="toggleMic()" id="micBtn">🎤 เปิดตัวฟังความถี่</button>
+<div id="visual" style="display: none;">
+  <div>ความถี่: <span id="freqDisplay">-</span> Hz</div>
+  <canvas id="waveCanvas" width="500" height="150"></canvas>
+</div>
+
 </table>
 <code>[25-02-2026 07:47:33] ล่าสุด: [25-03-2026 10:18:16]</code>
 
@@ -72,6 +81,7 @@
   filterRows(idArray);
 });
 
+let currentFreq = null;
 let sustainMode = false;
 let currentOsc = null;
 let currentGain = null;
@@ -150,6 +160,13 @@ console.log(note);
 });
 
 function playTone(frequency) {
+  // 🎯 ถ้าเป็นโหมดยาว และกดโน้ตเดิม
+  if (sustainMode && currentFreq === frequency) {
+    stopTone();
+    currentFreq = null;
+    return;
+  }
+
   stopTone(); // หยุดเสียงเดิมก่อน
 
   const oscillator = audioCtx.createOscillator();
@@ -169,12 +186,14 @@ function playTone(frequency) {
 
     currentOsc = oscillator;
     currentGain = gainNode;
+    currentFreq = frequency; // ✅ จำค่า
   } else {
-    // ⚡ โหมดสั้น (เดิม)
+    // ⚡ โหมดสั้น
     gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
 
     oscillator.stop(audioCtx.currentTime + 1);
+    currentFreq = null;
   }
 }
 
@@ -183,6 +202,7 @@ function stopTone() {
     currentGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
     currentOsc.stop(audioCtx.currentTime + 0.3);
     currentOsc = null;
+    currentFreq = null; // ✅ รีเซ็ต
   }
 }
 
@@ -216,5 +236,162 @@ function showAll() {
 }
 </script>
 
+<script>
+  // microphone analyzer
+let lastFreq = null;
+let micOn = false;
+let analyser, micStream, dataArray, bufferLength;
+let animationId;
+
+async function toggleMic() {
+  micOn = !micOn;
+
+  const btn = document.getElementById("micBtn");
+  let divVisual = document.getElementById("visual");
+
+  if (micOn) {
+    btn.innerText = "❌ ปิดตัวฟังความถี่";
+
+    divVisual.style.display = "block"
+
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const source = audioCtx.createMediaStreamSource(micStream);
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+
+    bufferLength = analyser.fftSize;
+    dataArray = new Float32Array(bufferLength);
+
+    source.connect(analyser);
+
+    drawWave();
+    detectPitch();
+
+  } else {
+    btn.innerText = "🎤 เปิดตัวฟังความถี่";
+    divVisual.style.display = "none"
+    cancelAnimationFrame(animationId);
+
+    if (micStream) {
+      micStream.getTracks().forEach(track => track.stop());
+    }
+
+    // ✅ 👉 ใส่ตรงนี้
+    document.getElementById("freqDisplay").innerText = "-";
+    lastFreq = null;
+  }
+}
+
+function drawWave() {
+  const canvas = document.getElementById("waveCanvas");
+  const ctx = canvas.getContext("2d");
+
+  function draw() {
+    animationId = requestAnimationFrame(draw);
+
+    analyser.getFloatTimeDomainData(dataArray);
+
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#0f0";
+
+    ctx.beginPath();
+
+    const sliceWidth = canvas.width / bufferLength;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] * 0.5 + 0.5;
+      const y = v * canvas.height;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+
+      x += sliceWidth;
+    }
+
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+  }
+
+  draw();
+}
+
+function detectPitch() {
+  const sampleRate = audioCtx.sampleRate;
+
+  function autoCorrelate(buf, sampleRate) {
+    let SIZE = buf.length;
+    let rms = 0;
+
+    for (let i = 0; i < SIZE; i++) {
+      let val = buf[i];
+      rms += val * val;
+    }
+    rms = Math.sqrt(rms / SIZE);
+    if (rms < 0.01) return -1;
+
+    let r1 = 0, r2 = SIZE - 1;
+    for (let i = 0; i < SIZE / 2; i++) {
+      if (Math.abs(buf[i]) < 0.2) { r1 = i; break; }
+    }
+    for (let i = 1; i < SIZE / 2; i++) {
+      if (Math.abs(buf[SIZE - i]) < 0.2) { r2 = SIZE - i; break; }
+    }
+
+    buf = buf.slice(r1, r2);
+    SIZE = buf.length;
+
+    let c = new Array(SIZE).fill(0);
+
+    for (let i = 0; i < SIZE; i++) {
+      for (let j = 0; j < SIZE - i; j++) {
+        c[i] += buf[j] * buf[j + i];
+      }
+    }
+
+    let d = 0;
+    while (c[d] > c[d + 1]) d++;
+
+    let maxval = -1, maxpos = -1;
+    for (let i = d; i < SIZE; i++) {
+      if (c[i] > maxval) {
+        maxval = c[i];
+        maxpos = i;
+      }
+    }
+
+    let T0 = maxpos;
+    return sampleRate / T0;
+  }
+
+  function update() {
+  if (!micOn) return;
+
+  analyser.getFloatTimeDomainData(dataArray);
+  const freq = autoCorrelate(dataArray, sampleRate);
+
+  if (freq !== -1) {
+    lastFreq = freq;
+    document.getElementById("freqDisplay").innerText = freq.toFixed(2);
+  } else {
+    // 🔒 ค้างค่าเดิม
+    document.getElementById("freqDisplay").innerText =
+      lastFreq ? lastFreq.toFixed(2) : "-";
+  }
+
+  requestAnimationFrame(update);
+}
+
+  update();
+}
+
+</script>
 </body>
 </html>
