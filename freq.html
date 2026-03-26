@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
 
 <style>
+  body {
+    font-size: 150%;
+  }
   button, select {
     font-family: 'Tlwg Typist', monospace;
     font-size: 18px;
@@ -153,9 +156,9 @@ console.log(note);
   tr.addEventListener("click", () => {
     playTone(parseFloat(freq));
   });
-  tr.addEventListener("touchstart", () => {
-    playTone(parseFloat(freq));
-  });
+  // tr.addEventListener("touchstart", () => {
+  //   playTone(parseFloat(freq));
+  // });
   tbody.appendChild(tr);
 });
 
@@ -206,9 +209,9 @@ function stopTone() {
   }
 }
 
-tr.addEventListener("mouseup", stopTone);
-tr.addEventListener("mouseleave", stopTone);
-tr.addEventListener("touchend", stopTone);
+// tr.addEventListener("mouseup", stopTone);
+// tr.addEventListener("mouseleave", stopTone);
+// tr.addEventListener("touchend", stopTone);
 
 document.querySelectorAll(".ratioBtn").forEach(button => {
   button.addEventListener("click", () => {
