@@ -1,3 +1,14 @@
+@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sarabun/Sarabun.css');
+@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Kanit/Kanit.css');
+@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Prompt/Prompt.css');
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Loma/Loma.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Mali/Mali.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypewriter/TlwgTypewriter.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sriracha/Sriracha.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Srisakdi/Srisakdi.css';
+@import url(https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@500&display=swap);
+
 .bottomright {
   position: -webkit-sticky;
   position: sticky;
@@ -91,4 +102,34 @@ td:hover {
 
 body {
   margin-left: 20px;
+}
+
+
+.font-control {
+  position: fixed;
+  top: 100px;
+  right: 0px;
+  background-color: yellow;
+  border: 2px solid blue;
+}
+
+
+.toggle-btn {
+  font-size: 20px;
+  padding: 0px;
+  background-color: yellow;
+  border: 2px solid blue;
+  cursor: pointer;
+}
+
+.font-panel {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: yellow;
+  font-size: 20px;
+}
+
+/* ซ่อน */
+.hiddenPanel {
+  display: none;
 }
