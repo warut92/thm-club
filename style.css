@@ -104,15 +104,13 @@ body {
   margin-left: 20px;
 }
 
-
 .font-control {
   position: fixed;
-  top: 100px;
+  top: 30px;
   right: 0px;
   background-color: yellow;
   border: 2px solid blue;
 }
-
 
 .toggle-btn {
   font-size: 20px;
@@ -132,4 +130,10 @@ body {
 /* ซ่อน */
 .hiddenPanel {
   display: none;
+}
+
+.font-panel select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
 }

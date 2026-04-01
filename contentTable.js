@@ -44,62 +44,7 @@
 		document.title = textBetween + "(โน้ตดนตรีไทย ชมรมดนตรีไทย ชสว)";
 	}
 	
-	 const increaseBtn = document.createElement("button");
-	 increaseBtn.className = "increaseBtn";
-	 increaseBtn.textContent = "ก+";
-	 document.body.appendChild(increaseBtn);
- 
-	 const decreaseBtn = document.createElement("button");
-	 decreaseBtn.className = "decreaseBtn";
-	 decreaseBtn.textContent = "ก-";
-	 document.body.appendChild(decreaseBtn);
- 
-	 // === LOAD FONT SIZE FROM localStorage ===
-	 let fontSize = localStorage.getItem("fontSize");
-	 if (fontSize) {
-	   fontSize = parseInt(fontSize);
-	 } else {
-	   fontSize = 20; // default
-	 }
-	document.body.style.fontSize = fontSize + "px";
- 
-	 // === ADD BUTTON EVENTS ===
-	 increaseBtn.addEventListener("click", () => {
-	   fontSize += 2;
-	  document.body.style.fontSize = fontSize + "px";
-	   localStorage.setItem("fontSize", fontSize);
-	 });
- 
-	 decreaseBtn.addEventListener("click", () => {
-	   if (fontSize > 8) {
-		 fontSize -= 2;
-		document.body.style.fontSize = fontSize + "px";
-		 localStorage.setItem("fontSize", fontSize);
-	   }
-	 });
-
-
-	 
-// === FONT LIST ===
-const fontList = ["Sarabun", "Kanit", "Prompt", 'Loma', 'Mali', 'Tlwg Typewriter', 'Tlwg Typist', 'Sriracha', 'Srisakdi', 'IBM Plex Sans Thai Looped'];
-
-// === FUNCTION CREATE SELECT ===
-function createFontSelect(prefixText, className) {
-  const select = document.createElement("select");
-  select.classList.add("font-select", className);
-
-  fontList.forEach(font => {
-    const option = document.createElement("option");
-    option.value = font;
-    option.textContent = `${prefixText}: ${font}`;
-    option.classList.add("font-option");
-    select.appendChild(option);
-  });
-
-  return select;
-}
-
-// === CREATE CONTAINER ===
+	 // === CREATE CONTAINER ===
 const fontControl = document.createElement("div");
 fontControl.classList.add("font-control");
 
@@ -112,48 +57,119 @@ toggleBtn.classList.add("toggle-btn");
 const panel = document.createElement("div");
 panel.classList.add("font-panel", "hiddenPanel");
 
+// =========================
+// 🔹 SIZE BUTTONS (อยู่ใน panel)
+// =========================
+const sizeControl = document.createElement("div");
+sizeControl.classList.add("size-control");
+
+const increaseBtn = document.createElement("button");
+increaseBtn.className = "increaseBtn";
+increaseBtn.textContent = "ก+";
+
+const decreaseBtn = document.createElement("button");
+decreaseBtn.className = "decreaseBtn";
+decreaseBtn.textContent = "ก-";
+
+sizeControl.appendChild(increaseBtn);
+sizeControl.appendChild(decreaseBtn);
+
+// =========================
+// 🔹 FONT LIST
+// =========================
+const fontList = [
+  "Sarabun", "Kanit", "Prompt", "Loma", "Mali",
+  "Tlwg Typewriter", "Tlwg Typist", "Sriracha",
+  "Srisakdi", "IBM Plex Sans Thai Looped"
+];
+
+// === FUNCTION CREATE SELECT ===
+function createFontSelect(prefixText, className) {
+  const select = document.createElement("select");
+  select.classList.add("font-select", className);
+
+  fontList.forEach(font => {
+    const option = document.createElement("option");
+    option.value = font;
+    option.textContent = `${prefixText}: ${font}`;
+    select.appendChild(option);
+  });
+
+  return select;
+}
+
 // === CREATE SELECTS ===
 const hFontSelect = createFontSelect("หลัก", "heading-select");
 const tableFontSelect = createFontSelect("โน้ต", "table-select");
 
-// === APPEND SELECTS TO PANEL ===
+// =========================
+// 🔹 APPEND TO PANEL
+// =========================
+panel.appendChild(sizeControl);   // ✅ ปุ่ม ก+ ก- อยู่ใน panel
 panel.appendChild(hFontSelect);
 panel.appendChild(tableFontSelect);
 
-// === APPEND EVERYTHING ===
+// =========================
+// 🔹 APPEND EVERYTHING
+// =========================
 fontControl.appendChild(toggleBtn);
 fontControl.appendChild(panel);
 document.body.appendChild(fontControl);
 
-// === TOGGLE FUNCTION ===
+// =========================
+// 🔹 TOGGLE PANEL
+// =========================
 toggleBtn.addEventListener("click", () => {
   panel.classList.toggle("hiddenPanel");
 });
 
+// =========================
+// 🔹 FONT SIZE SYSTEM
+// =========================
+let fontSize = localStorage.getItem("fontSize");
+fontSize = fontSize ? parseInt(fontSize) : 20;
 
-function applyFonts() {
-	const hFont = hFontSelect.value;
-	const tableFont = tableFontSelect.value;
-  
-	// Apply to headings
-	document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,small,a,body").forEach(el => {
-	  el.style.fontFamily = `'${hFont}', monospace`;
-	});
-  
-	// Apply to table
-	document.querySelectorAll("table, td, th").forEach(el => {
-	  el.style.fontFamily = `'${tableFont}', monospace`;
-	});
-  
-	// Save
-	localStorage.setItem("hFont", hFont);
-	localStorage.setItem("tableFont", tableFont);
+document.body.style.fontSize = fontSize + "px";
+
+increaseBtn.addEventListener("click", () => {
+  fontSize += 2;
+  document.body.style.fontSize = fontSize + "px";
+  localStorage.setItem("fontSize", fontSize);
+});
+
+decreaseBtn.addEventListener("click", () => {
+  if (fontSize > 8) {
+    fontSize -= 2;
+    document.body.style.fontSize = fontSize + "px";
+    localStorage.setItem("fontSize", fontSize);
   }
+});
 
-  hFontSelect.addEventListener("change", applyFonts);
+// =========================
+// 🔹 APPLY FONT
+// =========================
+function applyFonts() {
+  const hFont = hFontSelect.value;
+  const tableFont = tableFontSelect.value;
+
+  document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,small,a,body").forEach(el => {
+    el.style.fontFamily = `'${hFont}', monospace`;
+  });
+
+  document.querySelectorAll("table, td, th").forEach(el => {
+    el.style.fontFamily = `'${tableFont}', monospace`;
+  });
+
+  localStorage.setItem("hFont", hFont);
+  localStorage.setItem("tableFont", tableFont);
+}
+
+// === EVENTS ===
+hFontSelect.addEventListener("change", applyFonts);
 tableFontSelect.addEventListener("change", applyFonts);
 
-const savedHFont = localStorage.getItem("hFont") || "T";
+// === LOAD SAVED ===
+const savedHFont = localStorage.getItem("hFont") || "Sarabun";
 const savedTableFont = localStorage.getItem("tableFont") || "Sarabun";
 
 hFontSelect.value = savedHFont;
