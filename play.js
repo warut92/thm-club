@@ -1,9 +1,10 @@
 
 const thmDiv = document.getElementById("thm");
+console.log(thmDiv);
 
 let i = 0;
 
-thmDiv.innerHTML = thmDiv.innerHTML.replace(/\d<\/small>|ชั้น<\/a>/g, (match) => {
+thmDiv.innerHTML = thmDiv.innerHTML.replace(/\d<\/small>|สร้อย<\/small>|บันไดเสียง [ดรมฟซลท]<\/a>|ชั้น<\/a>/g, (match) => {
   if (i < sections.length) {
     const btn = `
       <button class="playBtn"

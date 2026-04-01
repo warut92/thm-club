@@ -1,5 +1,7 @@
   //ดึงโน้ตตัวเลข
   const allTextNote = document.getElementById("thm").innerText;
+
+//   console.log(allTextNote);
   const regex = /\(\[?([^\]\)]+)\]?\)\s*([\s\S]*?)\s*\/\//g;
   
   let matches;
