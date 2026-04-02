@@ -1,22 +1,43 @@
+ // select all tables
+ const tables = document.querySelectorAll("table");
 
-const thmDiv = document.getElementById("thm");
-console.log(thmDiv);
-
-let i = 0;
-
-thmDiv.innerHTML = thmDiv.innerHTML.replace(/\d<\/small>|สร้อย<\/small>|บันไดเสียง [ดรมฟซลท]<\/a>|ชั้น<\/a>/g, (match) => {
-  if (i < sections.length) {
-    const btn = `
-      <button class="playBtn"
-        onclick='handlePlay(this, ${JSON.stringify(sections[i].data)})'>
-        เล่น
-      </button>
-    `;
-    i++;
-    return match + btn;
-  }
-  return match;
-});
+ document.addEventListener("click", (e) => {
+   const table = e.target.closest("table");
+   if (!table) return;
+ 
+   const tables = document.querySelectorAll("table");
+   tables.forEach(t => t.classList.remove("active"));
+   table.classList.add("active");
+ 
+   // ✅ get all text
+   const text = table.innerText;
+  //  console.log(text);
+ 
+   function convertThaiNotes(str) {
+   const map = {
+     "ด": "1",
+     "ร": "2",
+     "ม": "3",
+     "ฟ": "4",
+     "ซ": "5",
+     "ล": "6",
+     "ท": "7",
+     "ํ": "*",
+     "ฺ": "."
+   };
+ 
+   return str
+     .replace(/\s+/g, "") // remove ALL spaces (and tabs/newlines) ก6ับต้น
+     
+     .split("")
+     .map(ch => map[ch] || ch)
+     .join("");
+ }
+let output = convertThaiNotes(text);
+ output = output.replace("ก6ับต้น", "") // remove 
+console.log(output);
+ handlePlay(this, output)
+ });
 
 const BASE_DURATION = 300; // ms
 
