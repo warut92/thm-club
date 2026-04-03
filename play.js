@@ -35,7 +35,7 @@
  }
 let output = convertThaiNotes(text);
  output = output.replace("ก6ับต้น", "") // remove 
-console.log(output);
+// console.log(output);
  handlePlay(this, output)
  });
 
