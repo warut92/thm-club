@@ -1,230 +1,239 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-<meta charset="UTF-8">
-<title>ตัวช่วยเขียนโน้ตขิม</title>
-<style>
-  .table-set {
-    margin-bottom: 30px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 5px;
-  }
-  .cell {
-    border: 1px solid #ccc;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 3px;
-  }
-  .cell input {
-    width: 45%;
-    margin: 2px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>ตัวช่วยเขียนโน้ตขิม</title>
+    <style>
+        .table-set {
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            border: 1px solid;
+            border-collapse: collapse;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+        }
+
+        .cell {
+            border: 1px solid;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+        }
+
+        .cell input {
+            width: 45%;
+            margin: 2px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h3>กำหนดจำนวนตาราง</h3>
-<input type="number" id="tableCount" value="1" min="1">
-<button onclick="generateTables()">สร้างตาราง</button>
-<button onclick="saveData()">สร้างโน้ต</button>
-<br><br>
-<textarea id="output" rows="10" style="width:100%;"></textarea>
-<div id="container"></div>
+    <h3>กำหนดจำนวนตาราง</h3>
+    <input type="number" id="tableCount" value="1" min="1">
+    <button onclick="generateTables()">สร้างตาราง</button>
+    <button onclick="saveData()">สร้างโน้ต</button>
+    <br><br>
+    <textarea id="output" rows="10" style="width:100%;"></textarea>
+    <div id="container"></div>
 
-<script>
-function generateTables() {
-  const container = document.getElementById("container");
-  container.innerHTML = "";
+    <script>
+        function generateTables() {
+            const container = document.getElementById("container");
+            container.innerHTML = "";
 
-  const count = parseInt(document.getElementById("tableCount").value);
+            const count = parseInt(document.getElementById("tableCount").value);
 
-  for (let t = 0; t < count; t++) {
+            for (let t = 0; t < count; t++) {
 
-    const tableSet = document.createElement("div");
-    tableSet.className = "table-set";
+                const tableSet = document.createElement("div");
+                tableSet.className = "table-set";
 
-    const title = document.createElement("h4");
-    title.textContent = "ตารางชุดที่ " + (t + 1);
+                const title = document.createElement("h4");
+                title.textContent = "ตารางชุดที่ " + (t + 1);
 
-    const grid = document.createElement("div");
-    grid.className = "grid";
+                const grid = document.createElement("div");
+                grid.className = "grid";
 
-    // 3 แถว × 8 คอลัมน์ = 24 ช่อง
-    for (let i = 0; i < 24; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
+                // 3 แถว × 8 คอลัมน์ = 24 ช่อง
+                for (let i = 0; i < 24; i++) {
+                    const cell = document.createElement("div");
+                    cell.className = "cell";
 
-      // input 4 ช่องต่อ cell
-      for (let j = 0; j < 4; j++) {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = "-"; 
-        input.placeholder = `#${j+1}`;
+                    // input 4 ช่องต่อ cell
+                    for (let j = 0; j < 4; j++) {
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.value = "-";
+                        input.placeholder = `#${j+1}`;
 
-        // 👇 บันทึกทุกครั้งที่พิมพ์
-        input.addEventListener("input", saveToLocal);
+                        // 👇 บันทึกทุกครั้งที่พิมพ์
+                        input.addEventListener("input", saveToLocal);
 
-        cell.appendChild(input);
-      }
+                        cell.appendChild(input);
+                    }
 
-      grid.appendChild(cell);
-    }
+                    grid.appendChild(cell);
+                }
 
-    tableSet.appendChild(title);
-    tableSet.appendChild(grid);
-    container.appendChild(tableSet);
-  }
-  setupArrowNavigation();
-}
+                tableSet.appendChild(title);
+                tableSet.appendChild(grid);
+                container.appendChild(tableSet);
+            }
+            setupArrowNavigation();
+        }
 
-generateTables();
-loadFromLocal();
+        generateTables();
+        loadFromLocal();
 
 
-function setupArrowNavigation() {
-  const inputs = document.querySelectorAll(".cell input");
+        function setupArrowNavigation() {
+            const inputs = document.querySelectorAll(".cell input");
 
-  inputs.forEach((input, index) => {
-    input.addEventListener("keydown", (e) => {
-      let targetIndex = null;
+            inputs.forEach((input, index) => {
+                input.addEventListener("keydown", (e) => {
+                    let targetIndex = null;
 
-      if (e.key === "ArrowRight") {
-        targetIndex = index + 1;
-      } else if (e.key === "ArrowLeft") {
-        targetIndex = index - 1;
-      } else if (e.key === "ArrowDown") {
-        targetIndex = index + 8 * 4; // ลง 1 แถว (8 cell × 4 input)
-      } else if (e.key === "ArrowUp") {
-        targetIndex = index - 8 * 4; // ขึ้น 1 แถว
-      }
+                    if (e.key === "ArrowRight") {
+                        targetIndex = index + 1;
+                    } else if (e.key === "ArrowLeft") {
+                        targetIndex = index - 1;
+                    } else if (e.key === "ArrowDown") {
+                        targetIndex = index + 8 * 4; // ลง 1 แถว (8 cell × 4 input)
+                    } else if (e.key === "ArrowUp") {
+                        targetIndex = index - 8 * 4; // ขึ้น 1 แถว
+                    }
 
-      if (targetIndex !== null && inputs[targetIndex]) {
-        e.preventDefault();
-        inputs[targetIndex].focus();
-        inputs[targetIndex].select(); 
-      }
-    });
-  });
-}
+                    if (targetIndex !== null && inputs[targetIndex]) {
+                        e.preventDefault();
+                        inputs[targetIndex].focus();
+                        inputs[targetIndex].select();
+                    }
+                });
+            });
+        }
 
-function saveToLocal() {
-  const tables = document.querySelectorAll(".table-set");
-  let data = [];
+        function saveToLocal() {
+            const tables = document.querySelectorAll(".table-set");
+            let data = [];
 
-  tables.forEach((table) => {
-    let tableData = [];
-    const inputs = table.querySelectorAll("input");
+            tables.forEach((table) => {
+                let tableData = [];
+                const inputs = table.querySelectorAll("input");
 
-    inputs.forEach((input) => {
-      tableData.push(input.value);
-    });
+                inputs.forEach((input) => {
+                    tableData.push(input.value);
+                });
 
-    data.push(tableData);
-  });
+                data.push(tableData);
+            });
 
-  localStorage.setItem("gridData", JSON.stringify(data));
-}
+            localStorage.setItem("gridData", JSON.stringify(data));
+        }
 
-function loadFromLocal() {
-  const data = JSON.parse(localStorage.getItem("gridData"));
-  if (!data) return;
+        function loadFromLocal() {
+            const data = JSON.parse(localStorage.getItem("gridData"));
+            if (!data) return;
 
-  const tables = document.querySelectorAll(".table-set");
+            const tables = document.querySelectorAll(".table-set");
 
-  tables.forEach((table, tIndex) => {
-    const inputs = table.querySelectorAll("input");
+            tables.forEach((table, tIndex) => {
+                const inputs = table.querySelectorAll("input");
 
-    inputs.forEach((input, i) => {
-      if (data[tIndex] && data[tIndex][i] !== undefined) {
-        input.value = data[tIndex][i];
-      }
-    });
-  });
-}
+                inputs.forEach((input, i) => {
+                    if (data[tIndex] && data[tIndex][i] !== undefined) {
+                        input.value = data[tIndex][i];
+                    }
+                });
+            });
+        }
 
-function saveData() {
-  const tables = document.querySelectorAll(".table-set");
-  let result = "";
+        function saveData() {
+            const tables = document.querySelectorAll(".table-set");
+            let result = "";
 
-  tables.forEach((table, tIndex) => {
-    // result += `ตารางที่ ${tIndex + 1}\n`;
+            tables.forEach((table, tIndex) => {
+                // result += `ตารางที่ ${tIndex + 1}\n`;
 
-    const inputs = table.querySelectorAll(".cell input");
+                const inputs = table.querySelectorAll(".cell input");
 
-    inputs.forEach((input, i) => {
-      result += input.value;
+                inputs.forEach((input, i) => {
+                    result += input.value;
 
-      // คั่นค่าใน 1 cell
-      if ((i + 1) % 4 !== 0) {
-        result += "";
-      } else {
-        result += " "; // จบ 1 cell
-      }
+                    // คั่นค่าใน 1 cell
+                    if ((i + 1) % 4 !== 0) {
+                        result += "";
+                    } else {
+                        result += " "; // จบ 1 cell
+                    }
 
-      // ขึ้นบรรทัดใหม่เมื่อครบ 1 แถว (32 input)
-      if ((i + 1) % 32 === 0) {
-        result += "\n";
-      }
-    });
+                    // ขึ้นบรรทัดใหม่เมื่อครบ 1 แถว (32 input)
+                    if ((i + 1) % 32 === 0) {
+                        result += "\n";
+                    }
+                });
 
-    result += "\n";
-  });
-  const cleaned = result
-  .split("\n")                 // แยกเป็นแต่ละบรรทัด
-  .map(line => line.trimEnd())// ลบช่องว่างท้ายบรรทัด
-  .join("\n");                // รวมกลับ
+                result += "\n";
+            });
+            const cleaned = result
+                .split("\n") // แยกเป็นแต่ละบรรทัด
+                .map(line => line.trimEnd()) // ลบช่องว่างท้ายบรรทัด
+                .join("\n"); // รวมกลับ
 
-  const finalText = transformResult(cleaned);
-  document.getElementById("output").value = finalText;
-}
+            const finalText = transformResult(cleaned);
+            document.getElementById("output").value = finalText;
+        }
 
-function transformResult(text) {
-  const tables = text.split(/\n\s*\n/); // 👈 แยกด้วยบรรทัดว่าง
- console.log(tables);
-  return tables.map(table => {
-    const lines = table.split("\n");
+        function transformResult(text) {
+            const tables = text.split(/\n\s*\n/); // 👈 แยกด้วยบรรทัดว่าง
+            console.log(tables);
+            return tables.map(table => {
+                const lines = table.split("\n");
 
-    return lines.map((line, rowIndex) => {
-      if (!line.trim()) return line;
+                return lines.map((line, rowIndex) => {
+                    if (!line.trim()) return line;
 
-      let cells = line.split(" ").map(cell => cell.trim());
+                    let cells = line.split(" ").map(cell => cell.trim());
 
-      cells = cells.map(cell => {
-        let nums = cell.split("").map(n => n.trim());
+                    cells = cells.map(cell => {
+                        let nums = cell.split("").map(n => n.trim());
 
-        nums = nums.map(n => {
-          if (n === "-") return n;
+                        nums = nums.map(n => {
+                            if (n === "-") return n;
 
-          // 🔹 แถวที่ 1
-          if (rowIndex === 0) {
-            if (["1","2","3","4","5"].includes(n)) return n + "*";
-          }
+                            // 🔹 แถวที่ 1
+                            if (rowIndex === 0) {
+                                if (["1", "2", "3", "4", "5"].includes(n)) return n +
+                                    "*";
+                            }
 
-          // 🔹 แถวที่ 2
-          if (rowIndex === 1) {
-            if (["1","2","3"].includes(n)) return n + "*";
-          }
+                            // 🔹 แถวที่ 2
+                            if (rowIndex === 1) {
+                                if (["1", "2", "3"].includes(n)) return n + "*";
+                            }
 
-          // 🔹 แถวที่ 3
-          if (rowIndex === 2) {
-            if (["6","7"].includes(n)) return n + ".";
-          }
+                            // 🔹 แถวที่ 3
+                            if (rowIndex === 2) {
+                                if (["6", "7"].includes(n)) return n + ".";
+                            }
 
-          return n;
-        });
+                            return n;
+                        });
 
-        return nums.join("");
-      });
+                        return nums.join("");
+                    });
 
-      return cells.join(" ");
-    }).join("\n");
+                    return cells.join(" ");
+                }).join("\n");
 
-  }).join("\n\n"); // 👈 คงบรรทัดว่างคั่นเหมือนเดิม
-}
-</script>
+            }).join("\n\n"); // 👈 คงบรรทัดว่างคั่นเหมือนเดิม
+        }
+    </script>
 
 </body>
+
 </html>
