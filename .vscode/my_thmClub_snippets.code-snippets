@@ -1,88 +1,88 @@
-{
-	"เพิ่มวันที่และเวลา": {
-    	"prefix": "/t",
-    	"body": [
-        "([$CURRENT_DATE-$CURRENT_MONTH-$CURRENT_YEAR $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND)]",
-    	],
-		"description": "เพิ่มวันที่เวลา"
-	},
-	"red": {
-    	"prefix": "/r",
-    	"body": [
-        "<red>$1</red>",
-    	],
-		"description": "tag สีแดง"
-	},
-	"green": {
-    	"prefix": "/g",
-    	"body": [
-        "<green>$1",
-    	],
-		"description": "tag เขียว"
-	},
-		"italic": {
-    	"prefix": "/i",
-    	"body": [
-        "<i>$1",
-    	],
-		"description": "tag italic"
-	},
-	"subtitle": {
-    	"prefix": "/s",
-    	"body": [
-        "([$1])",
-    	],
-		"description": "tag italic"
-	},
-	"ท่อน 1": {
-    	"prefix": "/1",
-    	"body": [
-        "([ท่อน_%1])",
-    	],
-		"description": "ท่อน 1"
-	},
-	"ท่อน 2": {
-    	"prefix": "/2",
-    	"body": [
-        "([ท่อน_%2])",
-    	],
-		"description": "ท่อน 2"
-	},
-	"ท่อน 3": {
-    	"prefix": "/3",
-    	"body": [
-        "([ท่อน_%3])",
-    	],
-		"description": "ท่อน 3"
-	},
-	"ท่อน 4": {
-    	"prefix": "/4",
-    	"body": [
-        "([ท่อน_%4])",
-    	],
-		"description": "ท่อน 4"
-	},
-	"_%2_ชั้น": {
-    	"prefix": "%2",
-    	"body": [
-        "_%2_ชั้น",
-    	],
-		"description": "_%2_ชั้น"
-	}
-	,
-	"_%3_ชั้น": {
-    	"prefix": "%3",
-    	"body": [
-        "_%3_ชั้น",
-    	],
-		"description": "_%3_ชั้น"
-	},
-	"_ชั้นเดียว": {
-    	"prefix": "%1",
-    	"body": [
-        "_ชั้นเดียว",
-    	],
-		"description": "_ชั้นเดียว"
-	}
+// {
+// 	"เพิ่มวันที่และเวลา": {
+//     	"prefix": "/t",
+//     	"body": [
+//         "([$CURRENT_DATE-$CURRENT_MONTH-$CURRENT_YEAR $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND)]",
+//     	],
+// 		"description": "เพิ่มวันที่เวลา"
+// 	},
+// 	"red": {
+//     	"prefix": "/r",
+//     	"body": [
+//         "<red>$1</red>",
+//     	],
+// 		"description": "tag สีแดง"
+// 	},
+// 	"green": {
+//     	"prefix": "/g",
+//     	"body": [
+//         "<green>$1",
+//     	],
+// 		"description": "tag เขียว"
+// 	},
+// 		"italic": {
+//     	"prefix": "/i",
+//     	"body": [
+//         "<i>$1",
+//     	],
+// 		"description": "tag italic"
+// 	},
+// 	"subtitle": {
+//     	"prefix": "/s",
+//     	"body": [
+//         "([$1])",
+//     	],
+// 		"description": "tag italic"
+// 	},
+// 	"ท่อน 1": {
+//     	"prefix": "/1",
+//     	"body": [
+//         "([ท่อน_%1])",
+//     	],
+// 		"description": "ท่อน 1"
+// 	},
+// 	"ท่อน 2": {
+//     	"prefix": "/2",
+//     	"body": [
+//         "([ท่อน_%2])",
+//     	],
+// 		"description": "ท่อน 2"
+// 	},
+// 	"ท่อน 3": {
+//     	"prefix": "/3",
+//     	"body": [
+//         "([ท่อน_%3])",
+//     	],
+// 		"description": "ท่อน 3"
+// 	},
+// 	"ท่อน 4": {
+//     	"prefix": "/4",
+//     	"body": [
+//         "([ท่อน_%4])",
+//     	],
+// 		"description": "ท่อน 4"
+// 	},
+// 	"_%2_ชั้น": {
+//     	"prefix": "%2",
+//     	"body": [
+//         "_%2_ชั้น",
+//     	],
+// 		"description": "_%2_ชั้น"
+// 	}
+// 	,
+// 	"_%3_ชั้น": {
+//     	"prefix": "%3",
+//     	"body": [
+//         "_%3_ชั้น",
+//     	],
+// 		"description": "_%3_ชั้น"
+// 	},
+// 	"_ชั้นเดียว": {
+//     	"prefix": "%1",
+//     	"body": [
+//         "_ชั้นเดียว",
+//     	],
+// 		"description": "_ชั้นเดียว"
+// 	}
 
-}
+// }
