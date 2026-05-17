@@ -16,7 +16,7 @@
   top: 0;
   right: 0px;
   padding: 1px;
-  width: 100px;
+  width: 200px;
   background-color: yellow;
   border: 2px solid blue;
   font-size: 20px;
@@ -72,13 +72,13 @@ page {
   position: -webkit-sticky;
   position: sticky;
   position: fixed;
-  top: 40px;
-  right: 0px;
+  top: 70px;
+  right: 110px;
   padding: 1px;
   width: 50px;
   background-color: yellow;
   border: 2px solid blue;
-  font-size: 20px;
+  font-size: 30px;
   text-align: center;
 }
 /* ลดขนาดฟอนต์ */
@@ -87,15 +87,20 @@ page {
   position: sticky;
   position: fixed;
   top: 70px;
-  right: 0px;
+  right: 50px;
   padding: 1px;
   width: 50px;
   background-color: yellow;
   border: 2px solid blue;
-  font-size: 20px;
+  font-size: 30px;
   text-align: center;
 }
 
+ .font-select {
+  font-size: 20px;
+  background-color: yellow;
+  border: 2px solid blue;
+ }
 td:hover {
   background-color: greenyellow;
 }
@@ -105,15 +110,16 @@ body {
 }
 
 .font-control {
+  font-size: 30px;
   position: fixed;
-  top: 30px;
+  top: 40px;
   right: 0px;
   background-color: yellow;
   border: 2px solid blue;
 }
 
 .toggle-btn {
-  font-size: 20px;
+  font-size: 40px;
   padding: 0px;
   background-color: yellow;
   border: 2px solid blue;
@@ -121,6 +127,7 @@ body {
 }
 
 .font-panel {
+  font-size: 40px;
   margin-top: 10px;
   padding: 10px;
   background-color: yellow;
