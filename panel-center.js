@@ -140,7 +140,7 @@ const borderColors = [
         if (color === "transparent") {
         el.style.border = "none";
         } else {
-        el.style.border = `2px solid ${color}`;
+        el.style.border = `1px solid ${color}`;
         }
         
         });
@@ -170,7 +170,7 @@ document.querySelectorAll("table, td, th").forEach(el => {
 if (savedBorder === "transparent") {
 el.style.border = "none";
 } else {
-el.style.border = `2px solid ${savedBorder}`;
+el.style.border = `1px solid ${savedBorder}`;
 }
 
 });
