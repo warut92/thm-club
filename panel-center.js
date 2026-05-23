@@ -33,7 +33,7 @@ sizeControl.appendChild(decreaseBtn);
 // =========================
 const fontList = [
 "Sarabun", "Kanit", "Prompt", "Loma", "Mali",
-"Tlwg Typewriter", "Tlwg Typist", "Sriracha",
+"Tlwg Typewriter", "Tlwg Typist", "Boon", "Garuda", "Umpush", "Sriracha",
 "Srisakdi", "IBM Plex Sans Thai Looped"
 ];
 
@@ -231,7 +231,7 @@ function applyFonts() {
 const hFont = hFontSelect.value;
 const tableFont = tableFontSelect.value;
 
-document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,small,a,body").forEach(el => {
+document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,a,body").forEach(el => {
 el.style.fontFamily = `'${hFont}', monospace`;
 });
 

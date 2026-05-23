@@ -7,6 +7,10 @@
 @import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css';
 @import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sriracha/Sriracha.css';
 @import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Srisakdi/Srisakdi.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7.6.0/fonts/Boon/Boon.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Garuda/Garuda.css';
+@import 'https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Umpush/Umpush.css';
+
 @import url(https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@500&display=swap);
 
 .bottomright {
@@ -73,7 +77,7 @@ page {
   position: sticky;
   position: fixed;
   top: 70px;
-  right: 110px;
+  right: 50px;
   padding: 1px;
   width: 50px;
   background-color: yellow;
@@ -87,7 +91,7 @@ page {
   position: sticky;
   position: fixed;
   top: 70px;
-  right: 50px;
+  right: 110px;
   padding: 1px;
   width: 50px;
   background-color: yellow;
@@ -147,4 +151,8 @@ body {
 
 table.active {
   border: 3px solid red;
+}
+
+.sabat {
+
 }

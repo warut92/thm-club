@@ -37,7 +37,9 @@ decreaseBtn.addEventListener("click", () => {
 
 	 
 // === FONT LIST ===
-const fontList = ["Sarabun", "Kanit", "Prompt", 'Loma', 'Mali', 'Tlwg Typewriter', 'Tlwg Typist', 'Sriracha', 'Srisakdi', 'IBM Plex Sans Thai Looped'];
+const fontList = ["Sarabun", "Kanit", "Prompt", "Loma", "Mali",
+"Tlwg Typewriter", "Tlwg Typist", "Boon", "Garuda", "Umpush", "Sriracha",
+"Srisakdi", "IBM Plex Sans Thai Looped"];
 
 // === FUNCTION CREATE SELECT ===
 function createFontSelect(prefixText, className) {
@@ -92,12 +94,13 @@ function applyFonts() {
 	const tableFont = tableFontSelect.value;
   
 	// Apply to headings
-	document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,small,a,body").forEach(el => {
-	  el.style.fontFamily = `'${hFont}', monospace`;
+	document.querySelectorAll("h1,h2,h3,h4,h5,h6,h,p,a,button,select").forEach(el => {
+	  el.style.fontFamily = `'${hFont}', sans-serif`;
 	});
+  console.log(hFont);
   
 	// Apply to table
-	document.querySelectorAll("table, td, th").forEach(el => {
+	document.querySelectorAll("table, td, th, .sabat").forEach(el => {
 	  el.style.fontFamily = `'${tableFont}', monospace`;
 	});
   
@@ -110,7 +113,7 @@ function applyFonts() {
 tableFontSelect.addEventListener("change", applyFonts);
 
 const savedHFont = localStorage.getItem("hFont") || "T";
-const savedTableFont = localStorage.getItem("tableFont") || "Sarabun";
+const savedTableFont = localStorage.getItem("tableFont") || "Tlwg Typist";
 
 hFontSelect.value = savedHFont;
 tableFontSelect.value = savedTableFont;
