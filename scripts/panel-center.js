@@ -222,12 +222,14 @@ increaseBtn.addEventListener("click", () => {
 fontSize += 2;
 document.body.style.fontSize = fontSize + "px";
 localStorage.setItem("fontSize", fontSize);
+console.log(fontSize);
 });
 
 decreaseBtn.addEventListener("click", () => {
-if (fontSize > 8) {
-fontSize -= 2;
-document.body.style.fontSize = fontSize + "px";
+    if (fontSize > 8) {
+        fontSize -= 2;
+        document.body.style.fontSize = fontSize + "px";
+        console.log(fontSize);
 localStorage.setItem("fontSize", fontSize);
 }
 });
