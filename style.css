@@ -153,6 +153,16 @@ table.active {
   border: 3px solid red;
 }
 
-.sabat {
-
+.bowcontrol {
+  position: -webkit-sticky;
+  position: sticky;
+  position: fixed;
+  top: 0;
+  right: 500px;
+  padding: 1px;
+  width: 200px;
+  background-color: yellow;
+  border: 2px solid blue;
+  font-size: 20px;
+  text-align: center;
 }

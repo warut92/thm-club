@@ -198,7 +198,15 @@ document.body.appendChild(fontControl);
 // =========================
 // 🔹 TOGGLE PANEL
 // =========================
+let i = 0
 toggleBtn.addEventListener("click", () => {
+    i++
+    let num = i%2
+    if (num == 1) {
+        toggleBtn.textContent = "❌";
+    } else {
+        toggleBtn.textContent = "🎨";
+    }
 panel.classList.toggle("hiddenPanel");
 });
 

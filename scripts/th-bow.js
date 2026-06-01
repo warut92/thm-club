@@ -1,5 +1,7 @@
+// bow control panel
+
 let all_notes = document.getElementById('thm')?.innerHTML
-console.log(all_notes);
+// console.log(all_notes);
 //คันชักออก
 let add_bow = all_notes.replace(/<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&gt;<\/sub>/g, "<div style=\"position: absolute; top: 50%; left: 35%; width: 20px; height: 20px; border-top: 1.5px solid black; border-radius: 50%; transform: translateX(-30%) rotate(180deg);\"></div>")
 
