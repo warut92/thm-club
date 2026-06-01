@@ -25,8 +25,13 @@ const decreaseBtn = document.createElement("button");
 decreaseBtn.className = "decreaseBtn";
 decreaseBtn.textContent = "ก-";
 
+const fontSizePanel = document.createElement("span");
+fontSizePanel.className = "fontSize";
+fontSizePanel.textContent = localStorage.getItem("fontSize");
+
 sizeControl.appendChild(increaseBtn);
 sizeControl.appendChild(decreaseBtn);
+sizeControl.appendChild(fontSizePanel);
 
 // =========================
 // 🔹 FONT LIST
@@ -222,14 +227,16 @@ increaseBtn.addEventListener("click", () => {
 fontSize += 2;
 document.body.style.fontSize = fontSize + "px";
 localStorage.setItem("fontSize", fontSize);
-console.log(fontSize);
+// console.log(fontSize);
+fontSizePanel.innerText = fontSize
 });
 
 decreaseBtn.addEventListener("click", () => {
     if (fontSize > 8) {
-        fontSize -= 2;
-        document.body.style.fontSize = fontSize + "px";
-        console.log(fontSize);
+fontSize -= 2;
+document.body.style.fontSize = fontSize + "px";
+// console.log(fontSize);
+fontSizePanel.innerText = fontSize
 localStorage.setItem("fontSize", fontSize);
 }
 });

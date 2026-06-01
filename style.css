@@ -100,6 +100,20 @@ page {
   text-align: center;
 }
 
+.fontSize {
+  position: -webkit-sticky;
+  position: sticky;
+  position: fixed;
+  top: 70px;
+  right: 180px;
+  padding: 1px;
+  width: 50px;
+  background-color: rgb(255, 255, 255);
+  border: 2px solid blue;
+  font-size: 28px;
+  text-align: center;
+}
+
  .font-select {
   font-size: 20px;
   background-color: yellow;
@@ -153,7 +167,7 @@ table.active {
   border: 3px solid red;
 }
 
-.bowcontrol {
+/* .bowcontrol {
   position: -webkit-sticky;
   position: sticky;
   position: fixed;
@@ -165,4 +179,50 @@ table.active {
   border: 2px solid blue;
   font-size: 20px;
   text-align: center;
+} */
+
+.bowcontrol{
+  position:fixed;
+  right:10px;
+  bottom:10px;
+  width:40px;
+  height:40px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+  cursor:pointer;
+  background-color: yellow;
+  border: 2px solid blue;
+  /* border-radius:50%; */
+  z-index:9999;
+}
+
+.bow-panel{
+  position:fixed;
+  right:10px;
+  bottom:65px;
+  width:260px;
+  background-color: yellow;
+  border: 2px solid blue;
+  /* border-radius:8px; */
+  padding:10px;
+  z-index:9999;
+}
+
+.control-row{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin:5px 0;
+}
+
+.control-row span{
+  width:90px;
+  font-size:12px;
+}
+
+.control-row input{
+  width:60px;
+  text-align:center;
 }
