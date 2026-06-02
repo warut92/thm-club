@@ -266,7 +266,7 @@ tableFontSelect.addEventListener("change", applyFonts);
 
 // === LOAD SAVED ===
 const savedHFont = localStorage.getItem("hFont") || "Sarabun";
-const savedTableFont = localStorage.getItem("tableFont") || "Sarabun";
+const savedTableFont = localStorage.getItem("tableFont") || "Tlwg Typist";
 
 hFontSelect.value = savedHFont;
 tableFontSelect.value = savedTableFont;
