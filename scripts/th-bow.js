@@ -199,7 +199,7 @@ height="30"
 viewBox="0 0 35 20">
 <path d="M2 18 Q17 2 33 18"
 stroke="black"
-stroke-width="${strokeWidth}"
+stroke-width="1.5"
 fill="none"/>
 </svg>
 `;
@@ -230,19 +230,32 @@ let add_bow = all_notes.replace(
     `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
   );
   
-  // คันชักเข้า 2 โน้ต (เสียงสูง ข้ามห้อง)
-  add_bow = add_bow.replace(
-    /([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub><\/span>([ดรมฟซลทํ])<\/td><td><span style=\"display: inline-block; position: relative;\">([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
-    `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2$3`
-  );
-  
+  // คันชักออก 2 โน้ต (ข้ามห้อง)
+//   add_bow = add_bow.replace(
+//     /([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)([\s\S]*?<\/td><td[\s\S]*?<span[^>]*>)([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)/g,
+// `$1$2$3$4`
+//   );
+// add_bow = add_bow.replace(
+//   /([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)([\s\S]*?<\/td><td[\s\S]*?<span[^>]*>)([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)/g,
+//   (match, g1, g2, g3, g4, g5) => {
+
+//       console.log("g1 =", g1);
+//       console.log("g2 =", g2);
+//       console.log("g3 =", g3);
+//       console.log("g4 =", g4);
+//       console.log("g5 =", g5);
+
+//       return g1 + g2 + g3 + g4;
+//   }
+// );
   // คันชักเข้า
   add_bow = add_bow.replace(
     /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
     bowIn
   );
 
-  document.getElementById('thm').innerHTML = add_bow
+  document.getElementById('thm').innerHTML =add_bow
+  console.log(add_bow);
 }
 
 
