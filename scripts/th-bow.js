@@ -1,6 +1,10 @@
 let all_notes = document.getElementById('thm').innerHTML
+let originalNotes = document.getElementById('thm')
 
-let currentSystem = 0;
+function myBow() {
+  document.getElementById('thm') = originalNotes.innerHTML
+  console.log(originalNotes);
+}
 
 // ค่าเริ่มต้น
 // let strokeWidth = 1.5;
@@ -63,9 +67,8 @@ bowPanel.style.display = "none";
 bowPanel.innerHTML = `
 <span>ระบบคันชัก</span>
 <br>
-<button id="bowSystem0" onclick="myBow()" value="1">ระบบ  >< </button>
-  <button id="bowSystem2" onclick="updateBow(this.value)" value="2">ระบบ <sub>︶</sub>︵</button>
-</div>
+<button onclick="myBow()">ระบบ  >< </button>
+<button onclick="updateBow()">ระบบ <sub>︶</sub>ด<sup>︵</button>
 <br>
 <span>ปรับลักษณะคันชัก</span>
 
@@ -153,7 +156,7 @@ controls.forEach(control => {
 // =======================
 // UPDATE FUNCTION
 // =======================
-function updateBow(n) {
+function updateBow() {
 
   // เรียก render โน้ตใหม่ตรงนี้
 
@@ -223,25 +226,7 @@ let add_bow = all_notes.replace(
     /([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub><\/span><\/td><td><span style=\"display: inline-block; position: relative;\">([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
     `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
   );
-  
-  // คันชักออก 2 โน้ต (ข้ามห้อง)
-//   add_bow = add_bow.replace(
-//     /([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)([\s\S]*?<\/td><td[\s\S]*?<span[^>]*>)([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)/g,
-// `$1$2$3$4`
-//   );
-// add_bow = add_bow.replace(
-//   /([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)([\s\S]*?<\/td><td[\s\S]*?<span[^>]*>)([ดรมฟซลท])([\s\S]*?<svg[\s\S]*?<\/svg>)/g,
-//   (match, g1, g2, g3, g4, g5) => {
 
-//       console.log("g1 =", g1);
-//       console.log("g2 =", g2);
-//       console.log("g3 =", g3);
-//       console.log("g4 =", g4);
-//       console.log("g5 =", g5);
-
-//       return g1 + g2 + g3 + g4;
-//   }
-// );
   // คันชักเข้า
   add_bow = add_bow.replace(
     /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
@@ -251,10 +236,4 @@ let add_bow = all_notes.replace(
   document.getElementById('thm').innerHTML = add_bow
 }
 
-updateBow()
-
-function myBow() {
-  document.getElementById('thm').style.display = "none"
-  document.getElementById('thm').innerHTML = all_notes
-  console.log("888");
-}
+// updateBow()
