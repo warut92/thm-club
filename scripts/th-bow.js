@@ -1,4 +1,4 @@
-let all_notes = document.getElementById('thm')?.innerHTML
+let all_notes = document.getElementById('thm').innerHTML
 
 let currentSystem = 0;
 
@@ -63,9 +63,8 @@ bowPanel.style.display = "none";
 bowPanel.innerHTML = `
 <span>ระบบคันชัก</span>
 <br>
-<button id="bowSystem0">ระบบ  >< </button>
-  <button id="bowSystem2">ระบบ 2</button>
-  <button id="bowSystem3">ระบบ 3</button>
+<button id="bowSystem0" onclick="myBow()" value="1">ระบบ  >< </button>
+  <button id="bowSystem2" onclick="updateBow(this.value)" value="2">ระบบ <sub>︶</sub>︵</button>
 </div>
 <br>
 <span>ปรับลักษณะคันชัก</span>
@@ -151,15 +150,10 @@ controls.forEach(control => {
     container.appendChild(row);
 });
 
-
-
-console.log(fontSize);
-
-
 // =======================
 // UPDATE FUNCTION
 // =======================
-function updateBow() {
+function updateBow(n) {
 
   // เรียก render โน้ตใหม่ตรงนี้
 
@@ -254,11 +248,13 @@ let add_bow = all_notes.replace(
     bowIn
   );
 
-  document.getElementById('thm').innerHTML =add_bow
-  console.log(add_bow);
+  document.getElementById('thm').innerHTML = add_bow
 }
 
-
-
-
 updateBow()
+
+function myBow() {
+  document.getElementById('thm').style.display = "none"
+  document.getElementById('thm').innerHTML = all_notes
+  console.log("888");
+}
