@@ -1,9 +1,15 @@
-let all_notes = document.getElementById('thm').innerHTML
-let originalNotes = document.getElementById('thm')
+let all_notes = document.getElementById('thm').innerHTML;
+let bowEnabled = false;
 
-function myBow() {
-  document.getElementById('thm') = originalNotes.innerHTML
-  console.log(originalNotes);
+function enableBow() {
+  bowEnabled = true;
+  updateBow();
+}
+
+
+function disableBow() {
+  bowEnabled = false;
+  document.getElementById('thm').innerHTML = all_notes;
 }
 
 // ค่าเริ่มต้น
@@ -64,11 +70,12 @@ const bowPanel = document.createElement("div");
 bowPanel.classList.add("bow-panel");
 bowPanel.style.display = "none";
 
+
 bowPanel.innerHTML = `
 <span>ระบบคันชัก</span>
 <br>
-<button onclick="myBow()">ระบบ  >< </button>
-<button onclick="updateBow()">ระบบ <sub>︶</sub>ด<sup>︵</button>
+<button onclick="disableBow()">ระบบ  >< </button>
+<button onclick="enableBow()">ระบบ <sub>︶</sub>ด<sup>︵</button>
 <br>
 <span>ปรับลักษณะคันชัก</span>
 
@@ -79,13 +86,10 @@ bowPanel.innerHTML = `
 
 document.body.appendChild(bowPanel);
 
-// =======================
-// TOGGLE PANEL
-// =======================
+// ======================= // TOGGLE PANEL // ======================= 
 togglePanelBow.addEventListener("click", () => {
-    bowPanel.style.display =
-        bowPanel.style.display === "none" ? "block" : "none";
-});
+   bowPanel.style.display = bowPanel.style.display === "none" ? "block" : "none"; 
+  });
 
 // =======================
 // CONTROL GENERATOR
@@ -158,10 +162,11 @@ controls.forEach(control => {
 // =======================
 function updateBow() {
 
-  // เรียก render โน้ตใหม่ตรงนี้
+  if (!bowEnabled) {
+      document.getElementById('thm').innerHTML = all_notes;
+      return;
+  }
 
-  //สร้างตัวแปร
-  //คันชักออก
   const bowOut = `
 <svg
 style="position:absolute; top:${bowOutTop}px; left:${leftOut}px; transform:rotate(180deg);"
@@ -174,8 +179,8 @@ stroke-width="${strokeWidth}"
 fill="none"/>
 </svg>
 `;
-//คันชักเข้า
-const bowIn = `
+
+  const bowIn = `
 <svg
 style="position:absolute; top:${bowInTop}px; left:${leftIn}px;"
 width="${width}"
@@ -188,7 +193,7 @@ fill="none"/>
 </svg>
 `;
 
-const bowOut2 = `
+  const bowOut2 = `
 <svg
 style="position:absolute; top:70%; left:-40%; transform:rotate(180deg);"
 width="35"
@@ -201,7 +206,7 @@ fill="none"/>
 </svg>
 `;
 
-const bowIn2 = `
+  const bowIn2 = `
 <svg
 style="position:absolute; top:-30%; left:-20%;"
 width="35"
@@ -214,26 +219,28 @@ fill="none"/>
 </svg>
 `;
 
-//ตัวเปลี่ยน
-// คันชักออก
-let add_bow = all_notes.replace(
-    /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&gt;<\/sub>/g,
-    bowOut
-  );
-   
-  // คันชักเข้า 2 โน้ต (ข้ามห้อง)
+  // เริ่มจากต้นฉบับทุกครั้ง
+  let add_bow = all_notes;
+
+  // คันชักออก
   add_bow = add_bow.replace(
-    /([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub><\/span><\/td><td><span style=\"display: inline-block; position: relative;\">([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
-    `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
+      /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&gt;<\/sub>/g,
+      bowOut
+  );
+
+  // คันชักเข้า 2 โน้ต
+  add_bow = add_bow.replace(
+      /([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub><\/span><\/td><td><span style="display: inline-block; position: relative;">([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
+      `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
   );
 
   // คันชักเข้า
   add_bow = add_bow.replace(
-    /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
-    bowIn
+      /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
+      bowIn
   );
 
-  document.getElementById('thm').innerHTML = add_bow
+  document.getElementById('thm').innerHTML = add_bow;
 }
 
-// updateBow()
+updateBow()
