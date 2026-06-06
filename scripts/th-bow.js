@@ -6,6 +6,11 @@ function enableBow() {
   updateBow();
 }
 
+function enableOldBow() {
+  bowEnabled = true;
+  oldBow();
+}
+
 
 function disableBow() {
   bowEnabled = false;
@@ -75,7 +80,46 @@ bowPanel.innerHTML = `
 <span>ระบบคันชัก</span>
 <br>
 <button onclick="disableBow()">ระบบ  >< </button>
-<button onclick="enableBow()">ระบบ <sub>︶</sub>ด<sup>︵</button>
+<button onclick="enableBow()">ระบบ 
+<span style="position:relative; display:inline-block;">
+ด
+<span style="
+position:absolute;
+left:50%;
+bottom:-10px;
+transform:translateX(-50%);
+">︶</span></span>
+<span style="position:relative; display:inline-block;">
+ด
+<span style="
+position:absolute;
+left:50%;
+top:-12px;
+transform:translateX(-50%);
+">︵</span></span>
+</button>
+
+
+<button onclick="enableOldBow()">ระบบ 
+<span style="position:relative; display:inline-block;">
+ด
+<span style="
+position:absolute;
+left:50%;
+top:-7px;
+transform:translateX(-50%);
+">︶</span></span>
+
+<span style="position:relative; display:inline-block;">
+ด
+<span style="
+position:absolute;
+left:50%;
+top:-12px;
+transform:translateX(-50%);
+">︵</span></span>
+</button>
+
 <br>
 <span>ปรับลักษณะคันชัก</span>
 
@@ -167,6 +211,9 @@ function updateBow() {
       return;
   }
 
+    // เรียกคันชักต้นฉบับ
+    document.getElementById('thm').innerHTML = all_notes;
+
   const bowOut = `
 <svg
 style="position:absolute; top:${bowOutTop}px; left:${leftOut}px; transform:rotate(180deg);"
@@ -244,3 +291,94 @@ fill="none"/>
 }
 
 updateBow()
+
+// =======================
+// UPDATE FUNCTION OLD BOW SYSTEM
+// =======================
+function oldBow() {
+
+  if (!bowEnabled) {
+      document.getElementById('thm').innerHTML = all_notes;
+      return;
+  }
+
+  // เรียกคันชักต้นฉบับ
+  document.getElementById('thm').innerHTML = all_notes;
+
+  bowOutTop = -10
+
+  const bowOut = `
+<svg
+style="position:absolute; top:${bowOutTop}px; left:${leftOut}px; transform:rotate(180deg);"
+width="${width}"
+height="${height}"
+viewBox="0 0 35 20">
+<path d="M${startX} ${startY} Q${controlX} ${controlY} ${endX} ${endY}"
+stroke="black"
+stroke-width="${strokeWidth}"
+fill="none"/>
+</svg>
+`;
+
+  const bowIn = `
+<svg
+style="position:absolute; top:${bowInTop}px; left:${leftIn}px;"
+width="${width}"
+height="${height}"
+viewBox="0 0 35 20">
+<path d="M${startX} ${startY} Q${controlX} ${controlY} ${endX} ${endY}"
+stroke="black"
+stroke-width="${strokeWidth}"
+fill="none"/>
+</svg>
+`;
+
+  const bowOut2 = `
+<svg
+style="position:absolute; top:70%; left:-40%; transform:rotate(180deg);"
+width="35"
+height="30"
+viewBox="0 0 35 20">
+<path d="M2 18 Q17 2 33 18"
+stroke="black"
+stroke-width="1.5"
+fill="none"/>
+</svg>
+`;
+
+  const bowIn2 = `
+<svg
+style="position:absolute; top:-30%; left:-20%;"
+width="35"
+height="40"
+viewBox="0 0 35 20">
+<path d="M2 18 Q17 2 33 18"
+stroke="black"
+stroke-width="${strokeWidth}"
+fill="none"/>
+</svg>
+`;
+
+  // เริ่มจากต้นฉบับทุกครั้ง
+  let add_bow = all_notes;
+
+  // คันชักออก
+  add_bow = add_bow.replace(
+      /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&gt;<\/sub>/g,
+      bowOut
+  );
+
+  // คันชักเข้า 2 โน้ต
+  add_bow = add_bow.replace(
+      /([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub><\/span><\/td><td><span style="display: inline-block; position: relative;">([ดรมฟซลท])<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
+      `$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
+  );
+
+  // คันชักเข้า
+  add_bow = add_bow.replace(
+      /<sub style="position: absolute; bottom: -0\.5em; left: 50%; transform: translateX\(-50%\);">&lt;<\/sub>/g,
+      bowIn
+  );
+
+  document.getElementById('thm').innerHTML = add_bow;
+}
