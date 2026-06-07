@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Table Builder</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    margin:20px;
+}
+
+table{
+    border-collapse:collapse;
+    margin-bottom:20px;
+}
+
+td{
+    border:1px solid #999;
+    padding:2px;
+}
+
+input{
+    width:60px;
+    text-align:center;
+}
+
+textarea{
+    width:100%;
+    height:200px;
+}
+
+button{
+    margin:5px;
+    padding:8px 12px;
+}
+</style>
+</head>
+<body>
+
+<h2>สร้างตาราง HTML</h2>
+
+<button onclick="addTableSet()">เพิ่มชุดตาราง</button>
+<button onclick="exportHTML()">ส่งออก HTML</button>
+<button onclick="importHTML()">นำเข้า HTML</button>
+<h3>กำหนดการแทนค่า</h3>
+
+<h3>ตัวเลือก</h3>
+
+<label>
+<input type="checkbox" id="convertMode" checked>
+ แปลงตัวเลขเป็นโน้ตไทย
+</label>
+
+<br><br>
+
+<label>กำหนด Mapping:</label><br>
+<input
+id="mappingInput"
+style="width:500px"
+value="1=ด,2=ร,3=ม,4=ฟ,5=ซ,6=ล,7=ท,8=ดํ,9=รํ">
+<hr>
+
+<div id="tables"></div>
+
+<h3>HTML Code</h3>
+<textarea id="htmlCode"></textarea>
+
+<script>
+
+
+function getMapping(){
+
+const text =
+    document.getElementById("mappingInput").value;
+
+let map = {};
+
+text.split(",").forEach(item=>{
+
+    let parts = item.split("=");
+
+    if(parts.length === 2){
+        map[parts[0].trim()] = parts[1].trim();
+    }
+});
+
+return map;
+}
+
+
+function createInput(value=""){
+
+const input = document.createElement("input");
+
+input.value = value;
+
+input.addEventListener("input",function(){
+
+    if(!document.getElementById("convertMode").checked){
+        return;
+    }
+
+    const map = getMapping();
+
+    let result = "";
+
+    for(const ch of this.value){
+        result += map[ch] || ch;
+    }
+
+    this.value = result;
+});
+
+return input;
+}
+
+const tablesDiv = document.getElementById("tables");
+
+function createTableSet(data = null){
+
+    const table = document.createElement("table");
+
+    for(let r=0;r<2;r++){
+        const tr = document.createElement("tr");
+
+        for(let c=0;c<8;c++){
+
+            const td = document.createElement("td");
+            const value =
+    (data && data[r] && data[r][c] !== undefined)
+    ? data[r][c]
+    : "";
+
+const input = createInput(value);
+
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+
+        table.appendChild(tr);
+    }
+
+    tablesDiv.appendChild(table);
+}
+
+function addTableSet(){
+    createTableSet();
+}
+
+function exportHTML(){
+
+    let html = "";
+
+    const tables = tablesDiv.querySelectorAll("table");
+
+    tables.forEach(table=>{
+
+        html += "<table border='1'>\n";
+
+        const rows = table.querySelectorAll("tr");
+
+        rows.forEach(row=>{
+
+            html += "<tr>";
+
+            row.querySelectorAll("input").forEach(input=>{
+                html += "<td>" + input.value + "</td>";
+            });
+
+            html += "</tr>\n";
+        });
+
+        html += "</table>\n\n";
+    });
+
+    document.getElementById("htmlCode").value = html;
+}
+
+function importHTML(){
+
+    const html = document.getElementById("htmlCode").value;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html,"text/html");
+
+    tablesDiv.innerHTML = "";
+
+    const tables = doc.querySelectorAll("table");
+
+    tables.forEach(table=>{
+
+        let data = [];
+
+        const rows = table.querySelectorAll("tr");
+
+        rows.forEach(row=>{
+
+            let rowData = [];
+
+            row.querySelectorAll("td").forEach(td=>{
+                rowData.push(td.textContent.trim());
+            });
+
+            data.push(rowData);
+        });
+
+        createTableSet(data);
+    });
+}
+
+// เริ่มต้น 1 ชุด
+createTableSet();
+
+
+
+</script>
+
+</body>
+</html>

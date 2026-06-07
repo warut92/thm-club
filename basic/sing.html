@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+		<title>รวมโน้ตชมรมดนตรีไทย ชสว.</title>
+    <link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css">
+		<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+รวมโน้ตชมรมดนตรีไทย ชสว.<br>
+<!-- <a href="../index.html" class="hidden">หน้าหลัก</a> -->
+<hr>
+เพลงร้องไทยเดิม
+<hr>
+แขกบรเทศ 2 ชั้น
+<br>
+<div id="thms">
+	<iframe width="560" height="315" src="https://www.youtube.com/embed/JCvRGdAxRYs?si=IFWU0lI1h7hCRfWC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+	(ท่อน 1)
+	พุทธานุภาพ[หือเงอ, เอิ๋งหือเงอ เฮอะเอย]นำผล เกิดสรรพมงคล[เอ่อเอ๊อ เฮอะเออเอ๋ย] น้อยใหญ่ 
+	(ท่อน 2)
+	เทวาอารักษ์[ฮือเงอ เหอเอ่อเอ๊ย] ทั่วไป ขอให้เป็นสุข[เอ่อเอ๊อ เฮอะเออเอ๋ย] สวัสดี 
+	<hr>
+	(ท่อน 1)
+	ธรรมานุภาพ[หือเงอ, เอิ๋งหือเงอ เฮอะเอย]นำผล เกิดสรรพมงคล[เอ่อเอ๊อ เฮอะเออเอ๋ย]เสริมศรี 
+	(ท่อน 2)
+	เทพช่วยรักษา[ฮือเงอ เหอเอ่อเอ๊ย]ปราณี ให้สุขสวัสดี[เอ่อเอ๊อ เฮอะเออเอ๋ย]ทั่วกัน 
+	<hr>
+	(ท่อน 1)
+	สังฆานุภาพ[ฮือเงอ เหอเอ่อเอ๊ย]นำผล เกิดสรรพมงคล[เอ่อเอ๊อ เฮอะเออเอ๋ย]แม่นมั่น
+	(ท่อน 2)
+	เทเวศร์คุ้มครอง[ฮือเงอ เหอเอ่อเอ๊ย]ป้องกัน สุขสวัสดิสันต์[เอ่อเอ๊อ เฮอะเออเอ๋ย]ทั่วไป
+	<small>บทประพันธ์และบทร้องอวยพรที่มาจากพระราชนิพนธ์ในพระบาทสมเด็จพระมงกุฎเกล้าเจ้าอยู่หัว (รัชกาลที่ 6) ในละครพูดเรื่อง "ปล่อยแก่"</small>
+</div>
+
+
+<div class="hidden">
+		<div class="bottomright"><a href="../index.html">หน้าหลัก</a> - <a href="#contentTable">สารบัญ</a></div>
+<a href="../index.html">กลับหน้าหลัก</a>
+</div>
+</body>
+<script src="../scripts/play.js"></script>
+<!-- <script src="https://warut92.github.io/thmjs/thm.js@0.0.1"></script> -->
+ <script>
+	let thm = document.getElementById('thms');
+
+	thm.innerHTML = thm.innerHTML.replace(
+  /\((.*)\)/g,
+  '<h>$1</h>'
+);
+
+	thm.innerHTML = thm.innerHTML.replace(
+  /\n/g,
+  '<br>'
+);
+
+thm.innerHTML = thm.innerHTML.replace(
+  /\[([^\]]+)\]/g,
+  '<sup style="color:red;font-size:0.7em;">$1</sup>'
+);
+ </script>
+<script src="../scripts/contentTable.js"></script>
+<script src="../scripts/panel-center.js"></script>
+
+</html>
