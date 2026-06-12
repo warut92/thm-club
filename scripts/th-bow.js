@@ -121,7 +121,7 @@ transform:translateX(-50%);
 </button>
 
 <br>
-<span>ปรับลักษณะคันชัก</span>
+<text>ปรับลักษณะคันชัก</text>
 
 <hr>
 
