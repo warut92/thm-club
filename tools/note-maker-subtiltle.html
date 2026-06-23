@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Text Converter</title>
+<style>
+body{
+    font-family:sans-serif;
+    margin:20px;
+}
+textarea{
+    width:100%;
+    height:200px;
+}
+button{
+    margin:10px 0;
+    padding:8px 15px;
+}
+</style>
+</head>
+<body>
+
+<h3>ต้นฉบับ</h3>
+<textarea id="input"></textarea>
+
+<br>
+<button onclick="convertText()">แปลงข้อความ</button>
+
+<h3>ผลลัพธ์</h3>
+<textarea id="output"></textarea>
+
+<script>
+function convertText() {
+    let text = document.getElementById("input").value;
+
+    let result = text
+        .split("\n")
+        .filter(line => line.trim() !== "")
+        .map(line => '"|' + line.replace(/\t/g, "|") + '|",')
+        .join("");
+
+    document.getElementById("output").value = result;
+}
+</script>
+
+</body>
+</html>

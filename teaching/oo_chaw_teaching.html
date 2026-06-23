@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพลงออเจ้าเอย โน้ตดนตรีไทย </title>
+</head>
+<body>
+    <video id="myVideo" width="400">
+        <source src="video/oo_chaw.mp4" type="video/mp4">
+    </video>
+    <div id="time"></div>
+    <div id="subtitle"></div>
+    <button onclick="playVideo()">เล่น</button>
+    <button onclick="pauseVideo()">หยุด</button>
+    
+    <button id="restartBtn">เริ่มต้นใหม่</button>
+    <input type="number" id="secInput" min="0" value="0">
+    <button id="jumpBtn">ไปที่วินาที</button>  
+    <div id="allSubtitle"></div>
+    <script>
+    const video = document.getElementById("myVideo");
+    
+    function playVideo(){
+        video.play();
+    }
+    
+    function pauseVideo(){
+        video.pause();
+    }
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+    video.currentTime = 0; // กลับไปต้นคลิป
+    video.play();          // เล่นต่อทันที
+});
+
+const secInput = document.getElementById("secInput");
+const jumpBtn = document.getElementById("jumpBtn");
+
+jumpBtn.addEventListener("click", () => {
+    video.currentTime = Number(secInput.value);
+});
+
+const timeDiv = document.getElementById("time");
+
+video.addEventListener("timeupdate", () => {
+    timeDiv.textContent = Math.floor(video.currentTime);
+});
+
+
+const subtitles = {
+    1: ["|-ด-ร|-ฟ-ซ|ลซฟซ|---ซ|ลซฟร|---ร|ฟรดฟ|-ซ-ล|","|---ดํ|-ล-ซ|ลซฟซ|---ล|ดํลซดํ|---ล|ดํลซฟ|-ร-ฟ|","|----|----|",],
+    25: ["|----|---ร|--ฟร|ดลซด|--ลซ|ฟร--|-ฟ-ซ|ลซฟด|", "|----|-ด-ร|ดล-ด|-ฟ-ฟ|---ด|รดลด|-ลซฟ|-ล-ด|"],
+    52: ["|----|---ร|--ฟร|ดลซด|--ลซ|ฟร--|-ฟรซ|--ดล|", "|----|-ฟ-ด|รดลด|-ฟ-ร|---ด|-ฟ-ซ|--ลซ|ฟร-ฟ|"],
+    78: ["|---ร|-ฟ-ร|ดลซล|ดร-ด|---ร|-ฟ-ร|ดลซล|ดร-ด|","|---ล|-ด-ล|ซฟรฟ|ซลซฟ|---ล|-ด-ซ|--ฟร|-ฟ-ซ|"],
+    98: ["|---ร|-ฟ-ร|ดลซล|ดร-ด|---ร|-ฟ-ร|ดลซล|ดร-ล|","|---ล|-ด-ซ|ลซฟซ|ลด-ล|---ล|-ด-ซ|----|----|","|ลซลซ|ฟร-ฟ|"],
+};
+
+let currentText = "";
+const subtitleDiv = document.getElementById("subtitle");
+video.addEventListener("timeupdate", () => {
+    const t = Math.floor(video.currentTime);
+
+    if(subtitles[t]){
+    subtitleDiv.innerHTML = subtitles[t].join("<br>");
+}
+});
+
+const box = document.getElementById("allSubtitle");
+
+for (const time in subtitles) {
+    box.innerHTML += `<b>${time}</b><br>`;
+    box.innerHTML += subtitles[time].join("<br>");
+    box.innerHTML += "<hr>";
+}
+</script>
+    </script>
+</body>
+</html>
