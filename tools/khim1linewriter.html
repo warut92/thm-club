@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Number Input</title>
+<style>
+body{
+    font-family:sans-serif;
+    padding:20px;
+}
+textarea{
+    width:100%;
+    height:300px;
+    font-size:24px;
+}
+</style>
+</head>
+<body>
+
+<p>
+Shift + เลข = เติม *<br>
+Ctrl + เลข = เติม .<br>
+Shift + Ctrl + เลข = เติม *.
+</p>
+
+<textarea id="txt"></textarea>
+
+<script>
+const txt = document.getElementById("txt");
+
+document.addEventListener("keydown", e => {
+
+const m = e.code.match(/^(?:Digit|Numpad)([1-9])$/);
+if(!m) return;
+
+e.preventDefault();
+
+let out = m[1];
+
+// Windows key
+if(e.metaKey) out += "*";
+
+// Ctrl
+if(e.ctrlKey) out += ".";
+
+txt.setRangeText(
+    out,
+    txt.selectionStart,
+    txt.selectionEnd,
+    "end"
+);
+});
+</script>
+
+</body>
+</html>
