@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>อ่านมิเตอร์ไฟฟ้า</title>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+}
+
+video{
+    width:95%;
+    max-width:700px;
+    border:2px solid #444;
+}
+
+canvas{
+    display:none;
+}
+
+button{
+    margin:10px;
+    padding:12px 25px;
+    font-size:20px;
+}
+
+#result{
+    font-size:22px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>อ่านเลขมิเตอร์ไฟฟ้า</h2>
+
+<video id="video" autoplay playsinline></video>
+
+<br>
+
+<button id="capture">📷 ถ่ายภาพ</button>
+
+<canvas id="canvas"></canvas>
+
+<div id="result"></div>
+
+<script>
+const video=document.getElementById("video");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+async function startCamera(){
+
+    const stream=await navigator.mediaDevices.getUserMedia({
+
+        video:{
+            facingMode:"environment",
+            width:{ideal:1920},
+            height:{ideal:1080}
+        }
+
+    });
+
+    video.srcObject=stream;
+
+}
+
+startCamera();
+
+document.getElementById("capture").onclick=async ()=>{
+
+    canvas.width=video.videoWidth;
+    canvas.height=video.videoHeight;
+
+    ctx.drawImage(video,0,0);
+
+    await readMeters();
+
+};
+const meters=[
+
+{
+name:"มิเตอร์ซ้าย",
+x:40,
+y:20,
+w:360,
+h:430
+},
+
+{
+name:"มิเตอร์กลาง",
+x:420,
+y:170,
+w:330,
+h:430
+},
+
+{
+name:"มิเตอร์ขวา",
+x:790,
+y:10,
+w:360,
+h:430
+}
+
+];
+async function readMeters(){
+
+let text="";
+
+for(const meter of meters){
+
+    const crop=document.createElement("canvas");
+    crop.width=meter.w;
+    crop.height=meter.h;
+
+    const c=crop.getContext("2d");
+
+    c.drawImage(
+        canvas,
+        meter.x,
+        meter.y,
+        meter.w,
+        meter.h,
+        0,
+        0,
+        meter.w,
+        meter.h
+    );
+
+    const number=await readNumber(crop);
+
+    text+=meter.name+" : "+number+"<br>";
+
+}
+
+document.getElementById("result").innerHTML=text;
+
+}
+async function readNumber(c){
+
+const r=await Tesseract.recognize(
+
+    c,
+    "eng",
+
+    {
+
+        tessedit_char_whitelist:"0123456789"
+
+    }
+
+);
+
+return r.data.text.replace(/\D/g,"");
+
+}
+</script>
+
+</body>
+</html>
