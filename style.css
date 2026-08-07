@@ -226,3 +226,99 @@ table.active {
   width:60px;
   text-align:center;
 }
+
+/* ==========================
+   Control Panel
+   ========================== */
+
+#musicControlPanel {
+    position: -webkit-sticky;
+    position: sticky;
+    position: fixed;
+
+    top: 100px;
+    right: 20px;
+
+    width: 180px;
+    padding: 15px;
+
+    background-color: yellow;
+    border: 2px solid blue;
+
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+
+    z-index: 99999;
+
+    font-family: Sarabun, Arial, sans-serif;
+}
+
+/* หัว Panel */
+#musicControlPanel .panelTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+/* ปุ่มต่าง ๆ */
+#musicControlPanel button {
+    width: 100%;
+    padding: 8px 10px;
+
+    margin-top: 6px;
+
+    border: none;
+    /* border-radius: 6px; */
+
+    background: #eee;
+    cursor: pointer;
+
+    font-size: 15px;
+}
+
+#musicControlPanel button:hover {
+    background: #ddd;
+}
+
+/* ปุ่มเล่น */
+#musicPlayBtn {
+    background: #d9f5df !important;
+}
+
+/* ปุ่มหยุด */
+#musicStopBtn {
+    background: #ffdede !important;
+}
+
+/* ปุ่มปิด Panel */
+#musicCloseBtn {
+    background: #eeeeee !important;
+}
+
+/* สถานะ */
+#musicStatus {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.speedControl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.speedControl label {
+  font-size: 14px;
+}
+
+#musicSpeed {
+  width: 60px;
+  padding: 5px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  font-size: 14px;
+  text-align: center;
+}

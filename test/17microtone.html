@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>เครื่องเล่นเสียง 17 เสียง</title>
+
+<style>
+body{
+    font-family:Sarabun,sans-serif;
+    background:#f2f5f8;
+    margin:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+.section{
+    margin-bottom:35px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+    gap:10px;
+}
+
+button{
+    padding:14px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:#2196F3;
+    color:white;
+    cursor:pointer;
+    transition:.15s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    background:#1976D2;
+}
+
+button:active{
+    transform:scale(.95);
+}
+</style>
+
+</head>
+<body>
+
+<h1>เครื่องเล่นเสียง 17 เสียง (3 ช่วงทบ)</h1>
+<div style="margin-bottom:20px">
+    ชุดสี :
+    <select id="setSelect">
+        <option value="0">ชุด 1</option>
+        <option value="1">ชุด 2</option>
+        <option value="2">ชุด 3</option>
+        <option value="3">ชุด 4</option>
+        <option value="4">ชุด 5</option>
+        <option value="5">ชุด 6</option>
+        <option value="6">ชุด 7</option>
+    </select>
+    </div>
+<div id="container"></div>
+
+<script>
+
+const audio=new (window.AudioContext||window.webkitAudioContext)();
+
+/*
+17 เสียง
+
+ซ   กลาง
+ล   -
+ล
+ล   +
+ท   -
+ท
+ท   +
+ด   -
+ด
+ด   +
+ร   กลาง
+ม   -
+ม
+ม   +
+ฟ   -
+ฟ
+ฟ   +
+ซ สูง
+
+*/
+
+const notes=[
+{name:"ซ",step:0},
+{name:"ล-",step:1},
+{name:"ล",step:2},
+{name:"ล+",step:3},
+{name:"ท-",step:4},
+{name:"ท",step:5},
+{name:"ท+",step:6},
+{name:"ด-",step:7},
+{name:"ด",step:8},
+{name:"ด+",step:9},
+{name:"ร",step:10},
+{name:"ม-",step:11},
+{name:"ม",step:12},
+{name:"ม+",step:13},
+{name:"ฟ-",step:14},
+{name:"ฟ",step:15},
+{name:"ฟ+",step:16}
+];
+
+const colorSets = [
+
+    [1,4,6,11,14],   // ชุดที่ 1
+    [4,7,9,14,17],                     // ชุดที่ 2
+    [],                     // ชุดที่ 3
+    [],                     // ชุดที่ 4
+    [],                     // ชุดที่ 5
+    [],                     // ชุดที่ 6
+    []                      // ชุดที่ 7
+
+];
+
+let currentColorSet = 0;
+
+// แบ่งช่วงซอลถึงซอลสูงเป็น 17 ช่วงเท่าๆกัน
+const ratio=Math.pow(2,1/17);
+
+// ซอลกลาง = 392Hz
+const baseFreq=392*2;
+
+function play(freq){
+
+    const osc=audio.createOscillator();
+    const gain=audio.createGain();
+
+    osc.type="sine";
+    osc.frequency.value=freq;
+
+    gain.gain.setValueAtTime(0.0001,audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.5,audio.currentTime+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001,audio.currentTime+0.5);
+
+    osc.connect(gain);
+    gain.connect(audio.destination);
+
+    osc.start();
+    osc.stop(audio.currentTime+0.5);
+
+}
+
+const names=[
+"ช่วงทบต่ำ",
+"ช่วงทบกลาง",
+"ช่วงทบสูง"
+];
+
+const container=document.getElementById("container");
+
+for(let octave=0;octave<3;octave++){
+
+    const sec=document.createElement("div");
+    sec.className="section";
+
+    const h=document.createElement("h2");
+    // h.innerText=names[octave];
+
+    const grid=document.createElement("div");
+    grid.className="grid";
+
+    notes.forEach((n,index)=>{
+
+        const b=document.createElement("button");
+
+        b.innerHTML=n.name;
+        const blue = colorSets[currentColorSet].includes(index+1);
+        b.className="noteBtn";
+        b.dataset.index=index+1;
+if(blue){
+    b.style.background="#29b6f6";
+}else{
+    b.style.background="#9e9e9e";
+}
+        let freq=baseFreq*Math.pow(2,octave-1);
+        freq*=Math.pow(ratio,n.step);
+
+        b.onclick=()=>play(freq);
+
+        grid.appendChild(b);
+
+    });
+
+    sec.appendChild(h);
+    sec.appendChild(grid);
+
+    container.appendChild(sec);
+
+}
+
+document.getElementById("setSelect").onchange=function(){
+
+currentColorSet = Number(this.value);
+
+document.querySelectorAll(".noteBtn").forEach(btn=>{
+
+    const idx = Number(btn.dataset.index);
+
+    if(colorSets[currentColorSet].includes(idx)){
+        btn.style.background="#29b6f6";
+    }else{
+        btn.style.background="#9e9e9e";
+    }
+
+});
+
+}
+</script>
+
+</body>
+</html>
