@@ -39,7 +39,7 @@ let output = convertThaiNotes(text);
  handlePlay(this, output)
  });
 
-const BASE_DURATION = 100; // ms
+const BASE_DURATION = 200; // ms
 
 const NOTE_FREQ = {
   "1": 466.16, // Bb
