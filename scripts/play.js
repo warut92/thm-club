@@ -108,7 +108,7 @@ function parseNotes(input) {
       i++;
     }
   }
-
+console.log(result);
   return result;
 }
 
@@ -125,6 +125,7 @@ function playSequence(input) {
   currentAudio = audioCtx;
 
   const notes = parseNotes(input);
+  console.log(notes);
   let currentTime = audioCtx.currentTime;
 
   isPlaying = true;
@@ -142,7 +143,7 @@ function playSequence(input) {
     
     // ความดังคงที่
     gain.gain.setValueAtTime(0.3, currentTime);
-    
+
     osc.start(currentTime);
     osc.stop(currentTime + n.duration / 1000);
     

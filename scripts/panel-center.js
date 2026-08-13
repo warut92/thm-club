@@ -73,12 +73,11 @@ bgTitle.textContent = "สีพื้นหลัง";
 bgControl.appendChild(bgTitle);
 
 const bgColors = [
-"#ffffff",
-"white",
 "#f5f5f5",
 "#fff8e1",
 "#e8f5e9",
 "#e3f2fd",
+"#1e2a3d",
 "#212121"
 ];
 
