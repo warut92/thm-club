@@ -1,0 +1,188 @@
+function convert2Line() {
+//get text from textarea
+let inputText = document.getElementById("thm_num").innerText;
+// console.log(typeof inputText);
+
+//splite new line by regex
+  let newLineArr = inputText.split(/\n/g)
+
+//find length
+let newLineArrLen = newLineArr.length;
+//make variable
+let HTMLTableOutput = "";
+// looping for create new line on display
+for (let i = 0; i < newLineArrLen; i++) {
+  HTMLTableOutput += "<tr><td>" + newLineArr[i] + "</td></tr>" + "\n";
+}
+//replace comma with table tag form
+//ชื่อเพลงและ a tag
+HTMLTableOutput = HTMLTableOutput.replace(/<tr><td>\(([^ )]*)\)<\/td><\/tr>/g, '<a name=\"$1\">$1</a><table>');
+//ข้อความแสดงท่อนหรือข้อความอื่น
+HTMLTableOutput = HTMLTableOutput.replace(/\[(.*?)\]/g, '<small>$1</small>');
+
+//ลบแท็กที่ไม่เกี่ยวข้องกับ <a>
+HTMLTableOutput = HTMLTableOutput.replace(/\<a\<\/td\>\<td\>/gm, '<a ');
+
+// แก้ตำแหน่งของเลข 8 ที่แสดงด้านล่างตัวโน้ต
+HTMLTableOutput = HTMLTableOutput.replace(/8\/8/g, '1/8*');
+HTMLTableOutput = HTMLTableOutput.replace(/9\/8/g, '2/8*');
+HTMLTableOutput = HTMLTableOutput.replace(/3\*\/8/g, '3/8*');
+
+//ตัวแปลงเลขขั้นคู่ของโน้ตมือฆ้อง
+//
+// HTMLTableOutput = HTMLTableOutput.replace(/\$/g, '/e');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/8/g, '/e');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/7/g, '/iiiiiiii');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/6/g, '/s');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/5/g, '/iiiii');
+// //
+// HTMLTableOutput = HTMLTableOutput.replace(/f/g, '/f');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/4/g, '/f');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/3/g, '/iii');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/2/g, '/t');
+// HTMLTableOutput = HTMLTableOutput.replace(/\/1/g, '/i');
+// HTMLTableOutput = HTMLTableOutput.replace(/8/g, '1*');
+
+//แปลงตัวเลขเป็นตัวโน้ต
+HTMLTableOutput = HTMLTableOutput.replace(/ /g, "</td><td>");
+HTMLTableOutput = HTMLTableOutput.replace(/1/g, 'ด');
+HTMLTableOutput = HTMLTableOutput.replace(/%ด/g, '1');
+HTMLTableOutput = HTMLTableOutput.replace(/2/g, 'ร');
+HTMLTableOutput = HTMLTableOutput.replace(/3/g, 'ม');
+HTMLTableOutput = HTMLTableOutput.replace(/4/g, 'ฟ');
+HTMLTableOutput = HTMLTableOutput.replace(/5/g, 'ซ');
+HTMLTableOutput = HTMLTableOutput.replace(/6/g, 'ล');
+HTMLTableOutput = HTMLTableOutput.replace(/7/g, 'ท');
+HTMLTableOutput = HTMLTableOutput.replace(/7/g, 'ท');
+HTMLTableOutput = HTMLTableOutput.replace(/8/g, 'ดํ');
+HTMLTableOutput = HTMLTableOutput.replace(/9/g, 'รํ');
+// HTMLTableOutput = HTMLTableOutput.replace(/\+/g, 'มํ');
+//สัญลักษณ์เสียงสูง
+HTMLTableOutput = HTMLTableOutput.replace(/\*/g, 'ํ');
+//สัญลักษณ์เสียงต่ำ
+HTMLTableOutput = HTMLTableOutput.replace(/\./g, 'ฺ');
+//ช่องว่าง
+HTMLTableOutput = HTMLTableOutput.replace(/\\s/g, ' ');
+HTMLTableOutput = HTMLTableOutput.replace(/\_/g, ' ');
+//โน้ตตัวเล็ก >> สำหรับการวาดเส้นโค้งที่สื่อถึงการสะบัด
+HTMLTableOutput = HTMLTableOutput.replace(/<small>([ดรมฟซลทํฺ]{1,5})<\/small>/g, '<small><span class="sabat">$1</span></small>');
+
+//คันชักออก
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํฺ])\{/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><</sub></span>');
+
+//คันชักเข้า
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํฺ])\}/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\">></sub></span>');
+
+//เครื่องหมายโน้ตบวก
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลท])\+/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.7em; left: 50%; transform: translateX(-50%);\">+</sub></span>');
+
+//เครื่อหมายโน้ตลบ
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลท])\_/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.7em; left: 50%; transform: translateX(-50%);\">-</sub></span>');
+
+//เครื่องหมายโน้ตกลาง
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลท])\o/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.6em; left: 50%; transform: translateX(-50%);\"><small>º</small></sub></span>');
+
+//เครื่องหมายพรม
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])t/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.7em; left: 70%; transform: translateX(-50%);\"><small>𝆱</small></sub></span>');
+
+//ตัวเลขแสดงตำแหน่งนิ้วซอและจะเข้
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\([๑๒๓๔๕๖๗๘๙๐ชกน])/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>$2</small></span>');
+
+//ตัวเลขแสดงตำแหน่งนิ้วซอ เลขโรมัน
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(iiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>5</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(iiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>4</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(iii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>3</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(ii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>2</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(i)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>1</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(0)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>0</small></span>');
+
+//ตัวเลขแสดงตำแหน่งนิ้วซอ เลขโรมัน แสดงเลขด้านล่าง
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiiiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>8</small></span>');
+// HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(e)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>8</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>7</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>6</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(s)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>6</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>5</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>4</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(f)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>4</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>3</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(ii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>2</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(t)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>2</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(i)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>1</small></span>');
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/([+])/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>+</small></span>');
+
+//แสดงสายลวดจะเข้+มือซ้ายขิม
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\([+])/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>$2</small></span>');
+
+////ส่วนของการแปลงเลข สำหรับแสดงผลตัวเลข
+//แปลงเลขไทยเป็นอาราบิก
+HTMLTableOutput = HTMLTableOutput.replace(/๑/g, '<span style="font-size:7px">1</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๒/g, '<span style="font-size:7px">2</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๓/g, '<span style="font-size:7px">3</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๔/g, '<span style="font-size:7px">4</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๕/g, '<span style="font-size:7px">5</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๖/g, '<span style="font-size:7px">6</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๗/g, '<span style="font-size:7px">7</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๘/g, '<span style="font-size:7px">8</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๙/g, '<span style="font-size:7px">9</span>');
+HTMLTableOutput = HTMLTableOutput.replace(/๐/g, '<span style="font-size:7px">0</span>');
+//เครื่องหมายดีดเข้า
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])v/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.3em; left: 50%; transform: translateX(-30%);\">𝆫</span>');
+//เครื่องหมายดีดออก
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ๑๒๓๔๕๖๗๘๙๐])\^/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.9em; left: 40%; transform: translateX(-5%);rotate: -180deg;\">𝆫</span>');
+//แปลงคำ next เป็น tag page เพื่อสร้าง page break สาหรับการพิมพ์
+HTMLTableOutput = HTMLTableOutput.replace(/<tr><td>next<\/td><\/tr>/gm, "<page>")
+//การพิมพ์เลข
+HTMLTableOutput = HTMLTableOutput.replace(/%ด/g, '1');
+HTMLTableOutput = HTMLTableOutput.replace(/%ร/g, '2');
+HTMLTableOutput = HTMLTableOutput.replace(/%ม/g, '3');
+HTMLTableOutput = HTMLTableOutput.replace(/%ฟ/g, '4');
+HTMLTableOutput = HTMLTableOutput.replace(/%ซ/g, '5');
+HTMLTableOutput = HTMLTableOutput.replace(/%ล/g, '6');
+HTMLTableOutput = HTMLTableOutput.replace(/%ท/g, '7');
+HTMLTableOutput = HTMLTableOutput.replace(/%8/g, '8');
+HTMLTableOutput = HTMLTableOutput.replace(/%9/g, '9');
+HTMLTableOutput = HTMLTableOutput.replace(/%0/g, '0');
+//ใส่ข้อความกลับต้น
+HTMLTableOutput = HTMLTableOutput.replace(/\/\//g, 'repeat');
+; HTMLTableOutput = HTMLTableOutput.replace(/<tr><td>repeat<\/td><\/tr>/g, '<tr><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"> </td><td style=\"border-bottom: hidden;border-left: hidden;border-right: hidden\"><small>กลับต้น</small></td></tr>');
+
+
+HTMLTableOutput = HTMLTableOutput.replace(/\<a\<\/td\>\<td\>/gm, '<a ');
+
+HTMLTableOutput = HTMLTableOutput.replace(/<tr><td><\/td><\/tr>/g, '<\/table><br><table>');
+console.log('HTMLTABLEOUTPUT', HTMLTableOutput)
+
+if (HTMLTableOutput !== "<tr><td></td></tr>\n") {
+  document.getElementById('thm_js').innerHTML =
+    "<table style=&#34width:100%&#34>\n" + HTMLTableOutput + "</table>";
+  }
+//ตัวสร้างเครื่องหมายสะบัด
+// ดึงข้อมูล class "sabat" ทั้งหมด
+const sabats = document.querySelectorAll(".sabat");
+
+// ลูป sabat เพื่อสร้างคุณลักษณะ
+sabats.forEach(cell => {
+// กำหนด position 
+cell.style.position = "relative";
+
+// สร้าง div สำหรับสร้างเส้นสะบัด ตั้งชื่อว่า curve
+const curve = document.createElement("div");
+
+// สร้างเส้นสะบัด
+curve.style.position = "absolute";
+curve.style.top = "-15%"; // ปรับค่าความสูงด้านบน
+curve.style.left = "50%";
+curve.style.width = "20px";  // ความกว้าง
+curve.style.height = "20px"; // ความสูง
+curve.style.borderTop = "1.5px solid black"; // ความหนา
+curve.style.borderRadius = "50%"; // ความโค้ง
+curve.style.transform = "translateX(-30%)"; // 
+
+// ใส่ curve ต่อไปใน cell ซึ่งอยู่ใน class sabat
+cell.prepend(curve);
+});
+
+}
+
+convert2Line()
