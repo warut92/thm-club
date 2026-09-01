@@ -5,11 +5,12 @@
 	<meta http-equiv="content-type" content="text/html" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
-	<title>ตัวแปลงโน้ตดนตรีไทย ดรมฟ เป็นโน้ตดนตรีสากล</title>
+	<title>ตัวแปลงโน้ตดนตรีไทย ดรมฟ thmjs เป็นโน้ตดนตรีสากล ผ่านระบบ ABC</title>
 
 	<link href="https://www.abcjs.net/abcjs-audio.css" media="all" rel="stylesheet" type="text/css" />
 	<script src="./script/abcjs-basic-min.js" type="text/javascript"></script>
 	<style>
+		@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sarabun/Sarabun.css');
 		.abcjs-inline-audio {
 			max-width: 770px;
 		}
@@ -21,23 +22,261 @@
 		p {
 			max-width: 600px;
 		}
+		body, tspan {
+    		font-family: "Sarabun", sans-serif;
+		}
+
+		.abcjs-staff {
+			font-family: "Bravura", sans-serif;
+		}
 	</style>
 </head>
 <body>
-<h1>ตัวแปลงโน้ตดนตรีไทย ดรมฟ เป็นโน้ตดนตรีสากล</h1>
-<textarea name="thm" id="thm" cols="80" rows="15" oninput="convert2abc()">
+<h1>ตัวแปลงโน้ตดนตรีไทย ดรมฟ thmjs เป็นโน้ตดนตรีสากล ผ่านระบบ ABC</h1>
+<textarea name="thm" id="thm" cols="80" rows="15" oninput="convert2abc()" onfocus="convert2abc()">
+(แขกบรเทศ_ชั้นเดียว)
+([ท่อน_%1])
+-666 -666 -555 -333 -5-8 -2*-3* -5*-3* -9-8
+//
 
+([ท่อน_%2])
+-3*-9 -8-6 -356 -8-9 -5-8 -2*-3* -5*-3* -9-8
+//
 </textarea>
 <script>
     function convert2abc() {
         let thm_note = document.getElementById('thm').value;
         let converted_thm
+		//ล้างเครื่องหมายใน thmjs เป็นช่องว่าง ก่อนการนำไปแปลงเป็น abc
+		thm_note = thm_note.replace(/[\[\]_]/g, " ")
+		// //แปลงโน้ต 8 9
+		// thm_note = thm_note.replace(/8/g, "1*")
+		// thm_note = thm_note.replace(/9/g, "2*")
         console.log(thm_note);
+		let songName = ""
+		songName = thm_note.match(/\(([^()]*)\)/);
+		//เปลี่ยนชื่อตัวแปร
+        converted_thm = thm_note;
+		//ลบชื่อเพลง
+		converted_thm = converted_thm.replace(/^.*\r?\n/, "")
 
-        converted_thm = thm_note
+		console.log(converted_thm)
+
+		let lines = converted_thm.split("\n");
+
+let reverse_bar_thm = lines.map(line => {
+
+    // ==========================================
+    // ประมวลผลเฉพาะบรรทัดที่ขึ้นต้นด้วย "-"
+    // ==========================================
+    if (line.startsWith("-")) {
+
+        let chars = line.split("");
+        let spaceCount = 0;
+
+        for (let i = 1; i < chars.length; i++) {
+
+            // ------------------------------------------
+            // ไม่ใช่ช่องว่าง → ข้าม
+            // ------------------------------------------
+            if (chars[i] !== " ") {
+                continue;
+            }
+
+            // พบช่องว่าง → เพิ่มลำดับ
+            spaceCount++;
+
+
+            // ==========================================
+            // กรณีด้านซ้ายเป็น \*
+            //
+            // เช่น
+            //      3\*␠
+            //
+            // ไม่ขยับ เพราะ \* ต้องติดกัน
+            // ==========================================
+            if (
+                i >= 2 &&
+                chars[i - 1] === "*" &&
+                chars[i - 2] === "\\"
+            ) {
+
+                // --------------------------------------
+                // ถ้าเป็นช่องว่างลำดับคู่
+                // ให้ใส่ | ก่อน
+                // --------------------------------------
+                if (spaceCount % 2 === 0) {
+                    chars[i] = "|";
+                }
+
+                continue;
+            }
+
+
+            // ==========================================
+            // กรณีด้านซ้ายเป็น "ตัวเลข*"
+            //
+            // เช่น
+            //
+            //      3*␠
+            //
+            // ย้ายเป็น
+            //
+            //      ␠3*
+            // ==========================================
+            if (
+                i >= 2 &&
+                chars[i - 1] === "*" &&
+                chars[i - 2] !== "\\"
+            ) {
+
+                // เก็บตัวเลขก่อน
+                let note = chars[i - 2];
+
+                // ช่องว่าง → *
+                chars[i] = "*";
+
+                // ตำแหน่งก่อน * → ตัวเลข
+                chars[i - 1] = note;
+
+                // ลบตัวเลขตำแหน่งเดิม
+                chars[i - 2] = " ";
+
+                // --------------------------------------
+                // ช่องว่างลำดับคู่
+                //
+                // ตอนนี้ช่องว่างอยู่ที่ i - 2
+                // ดังนั้นต้องใส่ | ตรงนี้
+                // --------------------------------------
+                if (spaceCount % 2 === 0) {
+                    chars[i - 2] = "|";
+                }
+
+                continue;
+            }
+
+
+            // ==========================================
+            // กรณีด้านซ้ายเป็น *
+            //
+            // จาก
+            //
+            //      *␠
+            //
+            // เป็น
+            //
+            //      ␠*
+            // ==========================================
+            if (chars[i - 1] === "*") {
+
+                chars[i] = "*";
+                chars[i - 1] = " ";
+
+                // --------------------------------------
+                // ช่องว่างลำดับคู่
+                // --------------------------------------
+                if (spaceCount % 2 === 0) {
+                    chars[i - 1] = "|";
+                }
+
+            } else {
+
+                // ======================================
+                // กรณีปกติ
+                //
+                // จาก
+                //
+                //      3␠
+                //
+                // เป็น
+                //
+                //      ␠3
+                // ======================================
+                chars[i] = chars[i - 1];
+                chars[i - 1] = " ";
+
+                // --------------------------------------
+                // ช่องว่างลำดับคู่
+                // --------------------------------------
+                if (spaceCount % 2 === 0) {
+                    chars[i - 1] = "|";
+                }
+            }
+        }
+
+        return chars.join("");
+    }
+
+    // ไม่ใช่บรรทัดโน้ต → คืนค่าเดิม
+    return line;
+
+}).join("\n");
+		
+		console.log(reverse_bar_thm);
+		//แปลงโน้ตทีละตัวเป็น abc
+		//6*
+		reverse_bar_thm = reverse_bar_thm.replace(/6\*-/g,"a")
+		.replace(/6\*/g,"a/")
+		//5*
+		.replace(/5\*-/g,"g")
+		.replace(/5\*/g,"g/")
+		//3*
+		.replace(/3\*-/g,"e")
+		.replace(/3\*/g,"e/")
+		//2*
+		.replace(/2\*-/g,"d")
+		.replace(/2\*/g,"d/")
+		//1*
+		.replace(/1\*-/g,"c")
+		.replace(/1\*/g,"c/")
+
+		//9
+		.replace(/9-/g,"d")
+		.replace(/9/g,"d/")
+		//8
+		.replace(/8-/g,"c")
+		.replace(/8/g,"c/")
+
+
+		//6
+		.replace(/6-/g,"A")
+		.replace(/6/g,"A/")
+		//5
+		.replace(/5-/g,"G")
+		.replace(/5/g,"G/")
+		//3
+		// .replace(/3--/g,"E2")
+		.replace(/3-/g,"E")
+		.replace(/3/g,"E/")
+		//2
+		.replace(/2-/g,"D")
+		.replace(/2/g,"D/")
+		//1
+		.replace(/1-/g,"C")
+		.replace(/1/g,"C/")
+
+		//ตัวหยุด
+		.replace(/--/g,"z2")
+		.replace(/-/g,"z")
+
+		//ลบเครื่องหมายทำซ้ำ //
+		.replace(/\/\//g,"")
+		//ลบบรรทัดว่าง
+		.replace(/^\s*$(?:\r\n|\r|\n)/gm, "")
+
+		//ข้อความท่อน
+		.replace(/^\(\s*(.*?)\s*\)\s*\n/gm,'"$1"')
+
+		.replace(/%C\//g,"1")
+		.replace(/%D\//g,"2")
+		console.log(reverse_bar_thm);
 
         //convert to abc
-        document.getElementById('abc').value = converted_thm
+        document.getElementById('abc').value = "T:" + songName[1] + `	
+M:2/4
+L:1/8
+K:C
+` + reverse_bar_thm
     }
 </script>
 
@@ -45,15 +284,15 @@
     T:The £42 cheque
     M:2/4
     L:1/8
-    K:G
+    K:C
     GG E/F/G/E/|DB, DB,|GG E/F/G/E/|DB, A,G,|GG E/F/G/E/|DB, DG/A/|BGAF|
     G2 G2:|
     A/|BG GA/B/|cB AG/A/|BGDG|BGd>c|BG GA/B/|cB AG/A/|BGAF|G2 G2:|
 </textarea>
 
 <hr />
-<!-- <div id="audio"></div> -->
-<!-- <div id="warnings"></div> -->
+<div id="audio"></div>
+<div id="warnings"></div>
 <div id="paper0" class="paper"></div>
 <div id="paper1" class="paper"></div>
 <div id="paper2" class="paper"></div>
