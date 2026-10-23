@@ -1,0 +1,13 @@
+ {
+    "name": "เว็บรวมโน้ตดนตรีไทย ครูวรุฒ",
+    "short_name": "โน้ตดนตรีไทย warut.net",
+    "description": "เว็บรวมโน้ตดนตรีไทย ครูวรุฒ",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2563eb",
+    "icons": [
+      { "src": "icons/icon.png", "sizes": "192x192", "type": "image/png" }
+    ]
+  }

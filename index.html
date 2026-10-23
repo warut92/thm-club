@@ -135,16 +135,8 @@ document.getElementById("dateTime").innerHTML = fullDate.toLocaleDateString('th-
 <script type="text/javascript">
 	let dateLastModified = document.lastModified
 	document.getElementById('date').innerHTML = "<small>" + dateLastModified + "</small>";
-
-	// Register service worker to control making site work offline
-
-	if ('serviceWorker' in navigator) {
-	navigator.serviceWorker
-		.register('sw.js')
-		.then(() => { 
-			console.log('Service worker registered!');
-		 });
-	}
 </script>
+<p id="status"></p>
+<script src="script-pwa.js"></script>
   </body>
 </html>

@@ -1,7 +1,5 @@
-self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open("v1").then(cache => {
-      return cache.addAll([
+const CACHE_NAME = 'my-pwa-v1';
+const ASSETS = [
         '/0-blank_tmp.html',
         '/9noteConverter.js',
         '/about.html',
@@ -67,18 +65,43 @@ self.addEventListener("install", e => {
         '/teaching/loy-krathong.html',
         '/teaching/pamaklonyaw.html',
         "/index.html"
-      ]);
-    })
-    .catch(err => {
-      console.error("Cache failed:", err);
+      ];
+  // ติดตั้ง: cache ไฟล์ทั้งหมดล่วงหน้า
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+// เปิดใช้งาน: ลบ cache เวอร์ชันเก่า
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+// ดึงข้อมูล: ใช้ cache ก่อน ถ้าไม่มีค่อยไปเน็ต
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
+          return res;
+        })
+        .catch(() => {
+          if (event.request.mode === 'navigate') {
+            return caches.match('./offline.html');
+          }
+        });
     })
   );
-});
-  
-  self.addEventListener("fetch", e => {
-    e.respondWith(
-      caches.match(e.request).then(resp => {
-        return resp || fetch(e.request);
-      })
-    );
-  });
+}); 
