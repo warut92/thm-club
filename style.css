@@ -322,3 +322,8 @@ table.active {
   font-size: 14px;
   text-align: center;
 }
+
+#status {
+  font-size: 10px;
+  color: brown;
+}
