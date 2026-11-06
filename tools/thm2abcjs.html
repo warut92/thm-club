@@ -1,39 +1,139 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="th">
 <head>
 	<meta charset='utf-8'>
-	<meta http-equiv="content-type" content="text/html" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
-	<title>ตัวแปลงโน้ตดนตรีไทย ดรมฟ thmjs เป็นโน้ตดนตรีสากล ผ่านระบบ ABC</title>
+	<title>ตัวแปลงโน้ตดนตรีไทย ดรมฟ (thmjs) เป็นโน้ตสากล ผ่านระบบ ABC</title>
 
 	<link href="https://www.abcjs.net/abcjs-audio.css" media="all" rel="stylesheet" type="text/css" />
 	<script src="./script/abcjs-basic-min.js" type="text/javascript"></script>
 	<style>
 		@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sarabun/Sarabun.css');
-		.abcjs-inline-audio {
-			max-width: 770px;
-		}
-		@media print {
-			h1, p, textarea, #selection, #audio, #warnings, hr {
-				display: none;
-			}
-		}
-		p {
-			max-width: 600px;
-		}
 		body, tspan {
-    		font-family: "Sarabun", sans-serif;
+			font-family: "Sarabun", sans-serif;
 		}
-
-		.abcjs-staff {
-			font-family: "Bravura", sans-serif;
+		body {
+			margin: 0 auto;
+			padding: 8px 16px 40px;
+			max-width: 1000px;
+		}
+		h1 { font-size: 1.4em; }
+		p, details { max-width: 760px; }
+		textarea {
+			width: 100%;
+			box-sizing: border-box;
+			font-family: monospace;
+			font-size: 15px;
+		}
+		.cols {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px;
+		}
+		@media (max-width: 760px) {
+			.cols { grid-template-columns: 1fr; }
+		}
+		.options {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px 18px;
+			margin: 10px 0;
+			padding: 8px 10px;
+			background: #f4f4f4;
+			border-radius: 6px;
+		}
+		.options label { white-space: nowrap; }
+		#thmWarnings {
+			color: #b45309;
+			font-size: 0.9em;
+			white-space: pre-wrap;
+		}
+		.abcjs-inline-audio { max-width: 770px; }
+		code { background: #eee; padding: 0 3px; border-radius: 3px; }
+		@media print {
+			h1, p, details, textarea, .options, .cols, button, #selection, #audio, #warnings, #thmWarnings, hr {
+				display: none !important;
+			}
 		}
 	</style>
 </head>
 <body>
-<h1>ตัวแปลงโน้ตดนตรีไทย ดรมฟ thmjs เป็นโน้ตดนตรีสากล ผ่านระบบ ABC</h1>
-<textarea name="thm" id="thm" cols="80" rows="15" oninput="convert2abc()" onfocus="convert2abc()">
+<h1>ตัวแปลงโน้ตดนตรีไทย ดรมฟ (thmjs) เป็นโน้ตสากล ผ่านระบบ ABC</h1>
+
+<details>
+	<summary>วิธีใช้และรูปแบบโน้ตที่รองรับ</summary>
+	<ul>
+		<li><code>1-7</code> = ด ร ม ฟ ซ ล ท, <code>8</code> = ดํ, <code>9</code> = รํ</li>
+		<li><code>*</code> หลังโน้ต = เสียงสูง (ใส่ซ้ำได้), <code>.</code> หลังโน้ต = เสียงต่ำ</li>
+		<li><code>-</code> = ลากเสียง หรือ เงียบ (เลือกได้ด้านล่าง)</li>
+		<li>เว้นวรรคคั่นห้องละ 4 ตัว ตัวสุดท้ายของห้องคือจังหวะตก</li>
+		<li><code>(ชื่อเพลง)</code> = ชื่อเพลง (ขึ้นเพลงใหม่), <code>([ท่อน_%1])</code> = ข้อความกำกับท่อน</li>
+		<li><code>//</code> = กลับต้น (แปลงเป็นเครื่องหมายย้อน <code>|: ... :|</code>)</li>
+		<li>เครื่องหมายประกอบ เช่น <code>^ v { } + = o t</code>, ตำแหน่งนิ้ว <code>\๑ /8</code> จะถูกข้ามไป</li>
+		<li>บรรทัดที่มีตัวอักษรไทย (เช่น โน้ตหน้าทับ) จะถูกข้าม</li>
+	</ul>
+</details>
+
+<div class="options">
+	<label>เสียง ด =
+		<select id="optKey">
+			<option value="C" selected>C</option>
+			<option value="D">D</option>
+			<option value="E">E</option>
+			<option value="F">F</option>
+			<option value="G">G</option>
+			<option value="A">A</option>
+			<option value="Bb">B♭</option>
+		</select>
+	</label>
+	<label>ทบเสียง
+		<select id="optOctave">
+			<option value="-1">ต่ำลง 1</option>
+			<option value="0" selected>ปกติ</option>
+			<option value="1">สูงขึ้น 1</option>
+		</select>
+	</label>
+	<label>โน้ต 1 ตัว =
+		<select id="optUnit">
+			<option value="16" selected>โน้ตเขบ็ต 2 ชั้น (1/16)</option>
+			<option value="8">โน้ตเขบ็ต 1 ชั้น (1/8)</option>
+		</select>
+	</label>
+	<label>ห้องสากล 1 ห้อง =
+		<select id="optGroups">
+			<option value="1">1 ห้องไทย</option>
+			<option value="2" selected>2 ห้องไทย</option>
+			<option value="4">4 ห้องไทย</option>
+		</select>
+	</label>
+	<label title="ให้ตัวสุดท้ายของห้องไทยตกที่จังหวะแรกของห้องสากล">
+		<input type="checkbox" id="optShift" checked> ตัวท้ายห้องตกจังหวะแรก
+	</label>
+	<label>ขีด (-) =
+		<select id="optHold">
+			<option value="sustain" selected>ลากเสียง</option>
+			<option value="rest">เงียบ</option>
+		</select>
+	</label>
+	<label>ความเร็ว ♩=
+		<input type="number" id="optTempo" value="80" min="20" max="300" style="width: 4em">
+	</label>
+	<label>เสียงเครื่อง
+		<select id="optProgram">
+			<option value="13" selected>ระนาด (Xylophone)</option>
+			<option value="12">Marimba</option>
+			<option value="73">ขลุ่ย (Flute)</option>
+			<option value="110">ซอ (Fiddle)</option>
+			<option value="0">Piano</option>
+		</select>
+	</label>
+</div>
+
+<div class="cols">
+	<div>
+		<b>โน้ตไทย (thmjs)</b>
+		<textarea name="thm" id="thm" rows="16" spellcheck="false">
 (แขกบรเทศ_ชั้นเดียว)
 ([ท่อน_%1])
 -666 -666 -555 -333 -5-8 -2*-3* -5*-3* -9-8
@@ -43,292 +143,352 @@
 -3*-9 -8-6 -356 -8-9 -5-8 -2*-3* -5*-3* -9-8
 //
 </textarea>
-<script>
-    function convert2abc() {
-        let thm_note = document.getElementById('thm').value;
-        let converted_thm
-		//ล้างเครื่องหมายใน thmjs เป็นช่องว่าง ก่อนการนำไปแปลงเป็น abc
-		thm_note = thm_note.replace(/[\[\]_]/g, " ")
-		// //แปลงโน้ต 8 9
-		// thm_note = thm_note.replace(/8/g, "1*")
-		// thm_note = thm_note.replace(/9/g, "2*")
-        console.log(thm_note);
-		let songName = ""
-		songName = thm_note.match(/\(([^()]*)\)/);
-		//เปลี่ยนชื่อตัวแปร
-        converted_thm = thm_note;
-		//ลบชื่อเพลง
-		converted_thm = converted_thm.replace(/^.*\r?\n/, "")
-
-		console.log(converted_thm)
-
-		let lines = converted_thm.split("\n");
-
-let reverse_bar_thm = lines.map(line => {
-
-    // ==========================================
-    // ประมวลผลเฉพาะบรรทัดที่ขึ้นต้นด้วย "-"
-    // ==========================================
-    if (line.startsWith("-")) {
-
-        let chars = line.split("");
-        let spaceCount = 0;
-
-        for (let i = 1; i < chars.length; i++) {
-
-            // ------------------------------------------
-            // ไม่ใช่ช่องว่าง → ข้าม
-            // ------------------------------------------
-            if (chars[i] !== " ") {
-                continue;
-            }
-
-            // พบช่องว่าง → เพิ่มลำดับ
-            spaceCount++;
-
-
-            // ==========================================
-            // กรณีด้านซ้ายเป็น \*
-            //
-            // เช่น
-            //      3\*␠
-            //
-            // ไม่ขยับ เพราะ \* ต้องติดกัน
-            // ==========================================
-            if (
-                i >= 2 &&
-                chars[i - 1] === "*" &&
-                chars[i - 2] === "\\"
-            ) {
-
-                // --------------------------------------
-                // ถ้าเป็นช่องว่างลำดับคู่
-                // ให้ใส่ | ก่อน
-                // --------------------------------------
-                if (spaceCount % 2 === 0) {
-                    chars[i] = "|";
-                }
-
-                continue;
-            }
-
-
-            // ==========================================
-            // กรณีด้านซ้ายเป็น "ตัวเลข*"
-            //
-            // เช่น
-            //
-            //      3*␠
-            //
-            // ย้ายเป็น
-            //
-            //      ␠3*
-            // ==========================================
-            if (
-                i >= 2 &&
-                chars[i - 1] === "*" &&
-                chars[i - 2] !== "\\"
-            ) {
-
-                // เก็บตัวเลขก่อน
-                let note = chars[i - 2];
-
-                // ช่องว่าง → *
-                chars[i] = "*";
-
-                // ตำแหน่งก่อน * → ตัวเลข
-                chars[i - 1] = note;
-
-                // ลบตัวเลขตำแหน่งเดิม
-                chars[i - 2] = " ";
-
-                // --------------------------------------
-                // ช่องว่างลำดับคู่
-                //
-                // ตอนนี้ช่องว่างอยู่ที่ i - 2
-                // ดังนั้นต้องใส่ | ตรงนี้
-                // --------------------------------------
-                if (spaceCount % 2 === 0) {
-                    chars[i - 2] = "|";
-                }
-
-                continue;
-            }
-
-
-            // ==========================================
-            // กรณีด้านซ้ายเป็น *
-            //
-            // จาก
-            //
-            //      *␠
-            //
-            // เป็น
-            //
-            //      ␠*
-            // ==========================================
-            if (chars[i - 1] === "*") {
-
-                chars[i] = "*";
-                chars[i - 1] = " ";
-
-                // --------------------------------------
-                // ช่องว่างลำดับคู่
-                // --------------------------------------
-                if (spaceCount % 2 === 0) {
-                    chars[i - 1] = "|";
-                }
-
-            } else {
-
-                // ======================================
-                // กรณีปกติ
-                //
-                // จาก
-                //
-                //      3␠
-                //
-                // เป็น
-                //
-                //      ␠3
-                // ======================================
-                chars[i] = chars[i - 1];
-                chars[i - 1] = " ";
-
-                // --------------------------------------
-                // ช่องว่างลำดับคู่
-                // --------------------------------------
-                if (spaceCount % 2 === 0) {
-                    chars[i - 1] = "|";
-                }
-            }
-        }
-
-        return chars.join("");
-    }
-
-    // ไม่ใช่บรรทัดโน้ต → คืนค่าเดิม
-    return line;
-
-}).join("\n");
-		
-		console.log(reverse_bar_thm);
-		//แปลงโน้ตทีละตัวเป็น abc
-		//6*
-		reverse_bar_thm = reverse_bar_thm.replace(/6\*-/g,"a")
-		.replace(/6\*/g,"a/")
-		//5*
-		.replace(/5\*-/g,"g")
-		.replace(/5\*/g,"g/")
-		//3*
-		.replace(/3\*-/g,"e")
-		.replace(/3\*/g,"e/")
-		//2*
-		.replace(/2\*-/g,"d")
-		.replace(/2\*/g,"d/")
-		//1*
-		.replace(/1\*-/g,"c")
-		.replace(/1\*/g,"c/")
-
-		//9
-		.replace(/9-/g,"d")
-		.replace(/9/g,"d/")
-		//8
-		.replace(/8-/g,"c")
-		.replace(/8/g,"c/")
-
-
-		//6
-		.replace(/6-/g,"A")
-		.replace(/6/g,"A/")
-		//5
-		.replace(/5-/g,"G")
-		.replace(/5/g,"G/")
-		//3
-		// .replace(/3 ---- -/g,"E3<E2")
-		// .replace(/3----/g,"E4")
-		// .replace(/3---/g,"E3")
-		.replace(/3--/g,"E2")
-		.replace(/3-/g,"E")
-		.replace(/3/g,"E/")
-		//2
-		.replace(/2-/g,"D")
-		.replace(/2/g,"D/")
-		//1
-		.replace(/1-/g,"C")
-		.replace(/1/g,"C/")
-
-		//ตัวหยุด
-		.replace(/--/g,"z2")
-		.replace(/-/g,"z")
-
-		//ลบเครื่องหมายทำซ้ำ //
-		.replace(/\/\//g,"")
-		//ลบบรรทัดว่าง
-		.replace(/^\s*$(?:\r\n|\r|\n)/gm, "")
-
-		//ข้อความท่อน
-		.replace(/^\(\s*(.*?)\s*\)\s*\n/gm,'"$1"')
-
-		.replace(/%C\//g,"1")
-		.replace(/%D\//g,"2")
-		console.log(reverse_bar_thm);
-
-        //convert to abc
-        document.getElementById('abc').value = "T:" + songName[1] + `	
-M:2/4
-L:1/8
-K:C
-` + reverse_bar_thm
-    }
-</script>
-
-<textarea name="abc" id="abc" cols="80" rows="15">X:14452
-    T:The £42 cheque
-    M:2/4
-    L:1/8
-    K:C
-    GG E/F/G/E/|DB, DB,|GG E/F/G/E/|DB, A,G,|GG E/F/G/E/|DB, DG/A/|BGAF|
-    G2 G2:|
-    A/|BG GA/B/|cB AG/A/|BGDG|BGd>c|BG GA/B/|cB AG/A/|BGAF|G2 G2:|
-</textarea>
+		<div id="thmWarnings"></div>
+	</div>
+	<div>
+		<b>ABC notation</b> <button type="button" id="copyBtn">คัดลอก</button>
+		<textarea name="abc" id="abc" rows="16" spellcheck="false"></textarea>
+	</div>
+</div>
 
 <hr />
 <div id="audio"></div>
 <div id="warnings"></div>
 <div id="paper0" class="paper"></div>
-<div id="paper1" class="paper"></div>
-<div id="paper2" class="paper"></div>
-<div id="paper3" class="paper"></div>
 <div id="selection"></div>
 
-<script type="text/javascript">
-	function selectionCallback(abcelem) {
-		var note = {};
-		for (var key in abcelem) {
-			if (abcelem.hasOwnProperty(key) && key !== "abselem")
-				note[key] = abcelem[key];
+<script>
+// =====================================================================
+// ตัวแปลง thmjs -> ABC
+// =====================================================================
+const THM2ABC = (() => {
+	const LETTERS = "CDEFGAB";
+	// ความยาวโน้ตที่เขียนเป็นตัวเดียวได้ (หน่วย = 1 ช่อง)
+	const VALID_LEN = [16, 14, 12, 8, 7, 6, 4, 3, 2, 1];
+	const KEYS = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, Bb: 6 };
+	const DECORATIONS = "^v{}+=otqf$";
+
+	function cleanText(s) {
+		return s.replace(/[\[\]]/g, "")
+			.replace(/\\s/g, " ")
+			.replace(/_/g, " ")
+			.replace(/%(\d)/g, "$1")
+			.replace(/"/g, "'")
+			.trim();
+	}
+
+	// แยกโน้ต 1 ห้อง (เช่น "-5*-3*") เป็นช่อง
+	function tokenizeGroup(g) {
+		const slots = [];
+		const unknown = [];
+		let i = 0;
+		const last = () => {
+			const s = slots[slots.length - 1];
+			return s && !s.hold ? s : null;
+		};
+		while (i < g.length) {
+			const c = g[i];
+			if (c >= "1" && c <= "9") {
+				if (c === "8") slots.push({ deg: 0, oct: 1 });
+				else if (c === "9") slots.push({ deg: 1, oct: 1 });
+				else slots.push({ deg: +c - 1, oct: 0 });
+				i++;
+			} else if (c === "-") {
+				slots.push({ hold: true });
+				i++;
+			} else if (c === "*" || c === ".") {
+				const n = last();
+				if (n) n.oct += c === "*" ? 1 : -1;
+				i++;
+			} else if (c === "\\" || c === "/") {
+				// เลขนิ้ว/ตำแหน่ง เช่น \๑  /8  \iii  \+
+				i++;
+				if (g[i] === "i") { while (g[i] === "i") i++; }
+				else i++;
+			} else if (DECORATIONS.includes(c)) {
+				i++;
+			} else {
+				unknown.push(c);
+				i++;
+			}
 		}
-		console.log(abcelem);
-		var el = document.getElementById("selection");
-		el.innerHTML = "<b>selectionCallback parameter:</b><br>" + JSON.stringify(note);
+		return { slots, unknown };
+	}
+
+	// อ่านข้อความทั้งหมด -> รายการเพลง
+	function parse(text) {
+		const tunes = [];
+		const warnings = [];
+		let tune = null;
+		const newTune = (title) => {
+			tune = { title, items: [] };
+			tunes.push(tune);
+		};
+		const lines = text.split(/\r?\n/);
+		lines.forEach((raw, lineNo) => {
+			const line = raw.trim();
+			if (!line || line === "next") return;
+
+			// ชื่อเพลง / ข้อความกำกับ
+			const paren = line.match(/^\((.*)\)$/);
+			if (paren) {
+				const inner = paren[1];
+				if (inner.trim().startsWith("[")) {
+					if (!tune) newTune("");
+					tune.items.push({ type: "label", text: cleanText(inner) });
+				} else {
+					const title = cleanText(inner);
+					if (tune && !tune.items.length && !tune.title) tune.title = title;
+					else newTune(title);
+				}
+				return;
+			}
+			if (line === "//") {
+				if (!tune) newTune("");
+				tune.items.push({ type: "repeat" });
+				return;
+			}
+			// ตัดเลขนิ้ว เช่น \ช \น ออกก่อนตรวจว่าเป็นบรรทัดตัวอักษร (เช่น หน้าทับ)
+			if (/[ก-ฮ]/.test(line.replace(/[\\/]./g, ""))) {
+				warnings.push(`บรรทัด ${lineNo + 1}: ข้าม (ไม่ใช่โน้ตตัวเลข) "${line}"`);
+				return;
+			}
+
+			if (!tune) newTune("");
+			const slots = [];
+			line.split(/\s+/).forEach((g, gi) => {
+				const r = tokenizeGroup(g);
+				if (r.unknown.length) {
+					warnings.push(`บรรทัด ${lineNo + 1} ห้องที่ ${gi + 1} "${g}": ไม่รู้จักเครื่องหมาย ${r.unknown.join(" ")}`);
+				}
+				if (r.slots.length !== 4) {
+					warnings.push(`บรรทัด ${lineNo + 1} ห้องที่ ${gi + 1} "${g}": มี ${r.slots.length} ตัว (ควรมี 4)`);
+				}
+				r.slots.forEach(s => { s.line = lineNo; slots.push(s); });
+			});
+			if (slots.length) tune.items.push({ type: "notes", slots });
+		});
+		return { tunes, warnings };
+	}
+
+	function pitchToAbc(deg, oct, opts) {
+		const li = KEYS[opts.key] + deg;
+		// ด ของคีย์ A และ B♭ เริ่มที่ทบล่าง เพื่อไม่ให้สูงเกินบรรทัด 5 เส้น
+		const base = KEYS[opts.key] >= 5 ? 3 : 4;
+		const octave = base + opts.octave + oct + Math.floor(li / 7);
+		let s = LETTERS[li % 7];
+		if (octave >= 5) {
+			s = s.toLowerCase() + "'".repeat(octave - 5);
+		} else {
+			s = s + ",".repeat(4 - octave);
+		}
+		return s;
+	}
+
+	function lenStr(n) {
+		return n === 1 ? "" : String(n);
+	}
+
+	// แบ่งเพลงเป็นช่วงตามเครื่องหมายกลับต้น //
+	function segmentsOf(tune) {
+		const segs = [];
+		let cur = { slots: [], labels: [], repeat: false };
+		tune.items.forEach(it => {
+			if (it.type === "notes") {
+				cur.slots.push(...it.slots);
+			} else if (it.type === "label") {
+				cur.labels.push({ pos: cur.slots.length, text: it.text });
+			} else if (it.type === "repeat") {
+				if (cur.slots.length) {
+					cur.repeat = true;
+					segs.push(cur);
+					cur = { slots: [], labels: [], repeat: false };
+				}
+			}
+		});
+		if (cur.slots.length || cur.labels.length) segs.push(cur);
+		return segs;
+	}
+
+	// แปลง 1 ช่วง -> ข้อความ ABC
+	function renderSegment(seg, opts) {
+		const { barLen, beatLen } = opts;
+		const pad = opts.shift ? 1 : 0;
+		const n = seg.slots.length;
+
+		// 1) รวมช่องเป็นโน้ต {start, len, note}
+		const events = [];
+		seg.slots.forEach((s, i) => {
+			const prev = events[events.length - 1];
+			if (s.hold) {
+				if (prev && (opts.hold === "sustain" || prev.note === null)) prev.len++;
+				else events.push({ start: i, len: 1, note: null });
+			} else {
+				events.push({ start: i, len: 1, note: s });
+			}
+		});
+
+		// 2) ตัดโน้ตตามเส้นกั้นห้องและจังหวะ
+		const chunks = [];
+		events.forEach(ev => {
+			let pos = ev.start;
+			let remain = ev.len;
+			while (remain > 0) {
+				const v = pos + pad;
+				let limit = barLen - (v % barLen);
+				if (v % beatLen !== 0) limit = Math.min(limit, beatLen - (v % beatLen));
+				const want = Math.min(remain, limit);
+				const take = VALID_LEN.find(l => l <= want);
+				remain -= take;
+				chunks.push({
+					start: pos, len: take, note: ev.note,
+					tie: ev.note !== null && remain > 0,
+					bar: Math.floor(v / barLen)
+				});
+				pos += take;
+			}
+		});
+
+		// 3) จัดกลุ่มเป็นห้อง
+		const bars = [];
+		chunks.forEach(c => {
+			let b = bars[bars.length - 1];
+			if (!b || b.index !== c.bar) {
+				b = { index: c.bar, chunks: [] };
+				bars.push(b);
+			}
+			b.chunks.push(c);
+		});
+
+		const labels = seg.labels.slice();
+		const barTexts = bars.map(b => {
+			let out = "";
+			b.chunks.forEach((c, i) => {
+				if (i > 0 && (c.start + pad) % beatLen === 0) out += " ";
+				while (labels.length && labels[0].pos <= c.start) {
+					out += `"^${labels.shift().text}"`;
+				}
+				out += c.note === null ? "z" : pitchToAbc(c.note.deg, c.note.oct, opts);
+				out += lenStr(c.len);
+				if (c.tie) out += "-";
+			});
+			const lastC = b.chunks[b.chunks.length - 1];
+			const endSlot = Math.min(lastC.start + lastC.len, n) - 1;
+			return { text: out, line: seg.slots[Math.max(endSlot, 0)].line };
+		});
+
+		// 4) ต่อห้อง + ขึ้นบรรทัดใหม่ตามบรรทัดของโน้ตไทย
+		let out = seg.repeat ? "|: " : "";
+		barTexts.forEach((b, i) => {
+			if (i > 0) {
+				out += barTexts[i - 1].line !== b.line ? " |\n" : " | ";
+			}
+			out += b.text;
+		});
+		out += seg.repeat ? " :|" : " |";
+		return out;
+	}
+
+	function convert(text, userOpts) {
+		const opts = Object.assign({
+			key: "C", octave: 0, unit: 16, groups: 2,
+			shift: true, hold: "sustain", tempo: 80, program: 13
+		}, userOpts);
+		// 1 ห้องไทย = 4 ช่อง
+		opts.barLen = 4 * opts.groups;
+		opts.beatLen = opts.unit / 4; // 1 จังหวะ = โน้ตตัวดำ
+		const { tunes, warnings } = parse(text);
+
+		// อัตราจังหวะ: barLen ช่อง x 1/unit
+		const quarters = opts.barLen * 4 / opts.unit;
+		const meter = Number.isInteger(quarters) ? `${quarters}/4` : `${opts.barLen}/${opts.unit}`;
+
+		const abc = tunes.map((tune, ti) => {
+			const body = segmentsOf(tune)
+				.filter(s => s.slots.length)
+				.map(s => renderSegment(s, opts))
+				.join("\n");
+			return [
+				`X:${ti + 1}`,
+				`T:${tune.title || "ไม่มีชื่อ"}`,
+				`M:${meter}`,
+				`L:1/${opts.unit}`,
+				`Q:1/4=${opts.tempo}`,
+				`%%MIDI program ${opts.program}`,
+				`K:${opts.key}`,
+				body
+			].join("\n");
+		}).join("\n\n");
+
+		return { abc, warnings };
+	}
+
+	return { convert, parse };
+})();
+
+if (typeof module !== "undefined") module.exports = THM2ABC;
+</script>
+
+<script type="text/javascript">
+	let editor = null;
+
+	function readOptions() {
+		const val = id => document.getElementById(id).value;
+		return {
+			key: val("optKey"),
+			octave: +val("optOctave"),
+			unit: +val("optUnit"),
+			groups: +val("optGroups"),
+			shift: document.getElementById("optShift").checked,
+			hold: val("optHold"),
+			tempo: +val("optTempo") || 80,
+			program: +val("optProgram")
+		};
+	}
+
+	function convert2abc() {
+		const thm = document.getElementById("thm").value;
+		const { abc, warnings } = THM2ABC.convert(thm, readOptions());
+		document.getElementById("abc").value = abc;
+		document.getElementById("thmWarnings").textContent = warnings.join("\n");
+		if (editor) editor.fireChanged();
+	}
+
+	function selectionCallback(abcelem) {
+		const note = {};
+		for (const key in abcelem) {
+			if (abcelem.hasOwnProperty(key) && key !== "abselem") note[key] = abcelem[key];
+		}
+		document.getElementById("selection").textContent = JSON.stringify(note);
 	}
 
 	function initEditor() {
-		new ABCJS.Editor("abc", { paper_id: "paper0",
+		convert2abc();
+		editor = new ABCJS.Editor("abc", {
+			paper_id: "paper0",
 			synth: {
 				el: "#audio",
 				options: { displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true }
 			},
 			generate_warnings: true,
-			warnings_id:"warnings",
+			warnings_id: "warnings",
 			abcjsParams: {
-				generateDownload: true,
+				responsive: "resize",
 				clickListener: selectionCallback
 			}
 		});
 	}
 
+	document.getElementById("thm").addEventListener("input", convert2abc);
+	document.querySelectorAll(".options select, .options input").forEach(el => {
+		el.addEventListener("change", convert2abc);
+	});
+	document.getElementById("copyBtn").addEventListener("click", () => {
+		const abc = document.getElementById("abc");
+		abc.select();
+		if (navigator.clipboard) navigator.clipboard.writeText(abc.value);
+		else document.execCommand("copy");
+	});
 	window.addEventListener("load", initEditor, false);
 </script>
 </body>
