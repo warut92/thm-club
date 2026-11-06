@@ -1,9 +1,14 @@
 // =====================================================
 // 🎻 Thai Tuner — เครื่องตั้งเสียงดนตรีไทย (ซอด้วง)
-// ใช้: <script src="../scripts/thai-tuner.js"></script>
-// สายใน = ซอล 342.2 Hz, สายนอก = เรสูง 508.4 Hz
+// ใช้:
+//   ซอด้วง : <script src="../scripts/thai-tuner.js"></script>
+//            (หรือ data-instrument="so-duang")  สายใน ซอล 342.2 / สายนอก เรสูง 508.4
+//   ซออู้   : <script src="../scripts/thai-tuner.js" data-instrument="so-u"></script>
+//            สายใน โด 230.3 / สายนอก ซอล 342.2
 // =====================================================
 (function () {
+  const scriptEl = document.currentScript;
+
   // ---------- ค่าความถี่เสียงไทย (ช่วงกลาง) ----------
   const BASE_FREQ = {
     'c': 230.3, 'd': 254.2, 'e': 280.7,
@@ -19,11 +24,26 @@
     'b': { th: 'ท', name: 'ที', num: '7' }
   };
 
-  // ---------- สายซอด้วง ----------
-  const STRINGS = [
-    { id: 'inner', label: 'สายใน (ซอล)', note: 'g', octave: 0, freq: 342.2 },
-    { id: 'outer', label: 'สายนอก (เรสูง)', note: 'd', octave: 1, freq: 508.4 }
-  ];
+  // ---------- ค่าตั้งสายของแต่ละเครื่อง ----------
+  const INSTRUMENTS = {
+    'so-duang': {
+      title: 'ตั้งเสียงซอด้วง',
+      strings: [
+        { id: 'inner', label: 'สายใน (ซอล)', freq: 342.2 },
+        { id: 'outer', label: 'สายนอก (เรสูง)', freq: 508.4 }
+      ]
+    },
+    'so-u': {
+      title: 'ตั้งเสียงซออู้',
+      strings: [
+        { id: 'inner', label: 'สายใน (โด)', freq: 230.3 },
+        { id: 'outer', label: 'สายนอก (ซอล)', freq: 342.2 }
+      ]
+    }
+  };
+  const instKey = (scriptEl && scriptEl.dataset.instrument) || 'so-duang';
+  const INSTRUMENT = INSTRUMENTS[instKey] || INSTRUMENTS['so-duang'];
+  const STRINGS = INSTRUMENT.strings;
 
   // สร้างตารางเสียงทุกช่วงเสียง (ต่ำ / กลาง / สูง / สูงมาก)
   const ALL_NOTES = [];
@@ -86,7 +106,7 @@
   panel.className = 'tt-panel';
   panel.hidden = true;
   panel.innerHTML = `
-    <h3>ตั้งเสียงซอด้วง</h3>
+    <h3>${INSTRUMENT.title}</h3>
     <div class="tt-small">เลือกสายที่ต้องการตั้ง หรือ "อัตโนมัติ" เพื่อหาเสียงที่ใกล้ที่สุด</div>
     <div class="tt-row tt-targets">
       <button data-target="auto" class="on">อัตโนมัติ</button>
