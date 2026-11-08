@@ -72,7 +72,42 @@ const bgTitle = document.createElement("div");
 bgTitle.textContent = "สีพื้นหลัง";
 bgControl.appendChild(bgTitle);
 
+// สร้างปุ่มเลือกสี: color = "default" คือปุ่มคืนค่าเริ่มต้น (แสดงเป็น ↺)
+function createColorButton(color, onClick) {
+const btn = document.createElement("button");
+btn.style.width = "24px";
+btn.style.height = "24px";
+btn.style.margin = "2px";
+btn.style.cursor = "pointer";
+btn.style.padding = "0";
+
+if (color === "default") {
+btn.textContent = "↺";
+btn.title = "ค่าเริ่มต้น";
+btn.style.background = "#fff";
+btn.style.border = "1px dashed #999";
+} else {
+btn.style.background = color;
+btn.style.border = "1px solid #999";
+}
+
+btn.addEventListener("click", () => onClick(color));
+return btn;
+}
+
+// ใส่สีและจำค่า: "default" = ล้างสีที่ตั้งไว้ และลบค่าที่จำไว้
+function applyBgColor(color) {
+if (color === "default") {
+document.body.style.backgroundColor = "";
+localStorage.removeItem("bgColor");
+} else {
+document.body.style.backgroundColor = color;
+localStorage.setItem("bgColor", color);
+}
+}
+
 const bgColors = [
+"default",
 "#f5f5f5",
 "#fff8e1",
 "#e8f5e9",
@@ -82,21 +117,43 @@ const bgColors = [
 ];
 
 bgColors.forEach(color => {
-const btn = document.createElement("button");
-
-btn.style.background = color;
-btn.style.width = "24px";
-btn.style.height = "24px";
-btn.style.margin = "2px";
-btn.style.border = "1px solid #999";
-btn.style.cursor = "pointer";
-
-btn.addEventListener("click", () => {
-document.body.style.backgroundColor = color;
-localStorage.setItem("bgColor", color);
+bgControl.appendChild(createColorButton(color, applyBgColor));
 });
 
-bgControl.appendChild(btn);
+// =========================
+// 🔹 FONT COLORS
+// =========================
+const fontColorControl = document.createElement("div");
+fontColorControl.classList.add("font-color-control");
+
+const fontColorTitle = document.createElement("div");
+fontColorTitle.textContent = "สีตัวอักษร";
+fontColorControl.appendChild(fontColorTitle);
+
+function applyFontColor(color) {
+if (color === "default") {
+document.body.style.color = "";
+localStorage.removeItem("fontColor");
+} else {
+document.body.style.color = color;
+localStorage.setItem("fontColor", color);
+}
+}
+
+const fontColors = [
+"default",
+"#000000",
+"#444444",
+"#5d4037",
+"#0d47a1",
+"#1b5e20",
+"#b71c1c",
+"#ffffff",
+"#ffe082"
+];
+
+fontColors.forEach(color => {
+fontColorControl.appendChild(createColorButton(color, applyFontColor));
 });
 
 // =========================
@@ -108,6 +165,27 @@ borderControl.classList.add("border-control");
 const borderTitle = document.createElement("div");
 borderTitle.textContent = "สีห้องโน้ต";
 borderControl.appendChild(borderTitle);
+
+// ใส่สีเส้นตาราง: ช่องว่าง (ไม่มีข้อความ) จะไม่มีเส้นตั้งซ้ายและเส้นนอนล่าง
+function applyTableBorder(color) {
+    document.querySelectorAll("table, td, th").forEach(el => {
+        if (color === "transparent") {
+            el.style.border = "none";
+            return;
+        }
+        el.style.border = `1px solid ${color}`;
+        if (el.tagName === "TABLE") return;
+        const text = el.textContent.trim();
+        if (text === "" || text === "กลับต้น") {
+            el.style.borderLeft = "hidden";
+            el.style.borderBottom = "hidden";
+        }
+        // ช่อง "กลับต้น" อยู่ขวาสุด จึงซ่อนเส้นขวาด้วย
+        if (text === "กลับต้น") {
+            el.style.borderRight = "hidden";
+        }
+    });
+}
 
 const borderColors = [
     "#000000",
@@ -138,17 +216,9 @@ const borderColors = [
         }
         
         btn.addEventListener("click", () => {
-        
-        document.querySelectorAll("table, td, th").forEach(el => {
-        
-        if (color === "transparent") {
-        el.style.border = "none";
-        } else {
-        el.style.border = `1px solid ${color}`;
-        }
-        
-        });
-        
+
+        applyTableBorder(color);
+
         localStorage.setItem("tableBorderColor", color);
         
         });
@@ -165,20 +235,15 @@ if (savedBg) {
 document.body.style.backgroundColor = savedBg;
 }
 
+const savedFontColor = localStorage.getItem("fontColor");
+if (savedFontColor) {
+document.body.style.color = savedFontColor;
+}
+
 const savedBorder = localStorage.getItem("tableBorderColor");
 
 if (savedBorder) {
-
-document.querySelectorAll("table, td, th").forEach(el => {
-
-if (savedBorder === "transparent") {
-el.style.border = "none";
-} else {
-el.style.border = `1px solid ${savedBorder}`;
-}
-
-});
-
+applyTableBorder(savedBorder);
 }
 
 // =========================
@@ -187,6 +252,7 @@ el.style.border = `1px solid ${savedBorder}`;
 panel.appendChild(sizeControl);
 
 panel.appendChild(bgControl);
+panel.appendChild(fontColorControl);
 panel.appendChild(borderControl);
 
 panel.appendChild(hFontSelect);

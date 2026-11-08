@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตัวแปลงโน้ตฆ้องบรรทัดเดียว → สองบรรทัด</title>
+<style>
+  body { font-family: "Sarabun", "Tahoma", sans-serif; max-width: 1400px; margin: 0 auto; padding: 16px; background: #fafafa; color: #222; }
+  h1 { font-size: 1.4rem; }
+  label { display: block; font-weight: bold; margin: 12px 0 4px; }
+  textarea { width: 100%; box-sizing: border-box; min-height: 140px; font-family: "Consolas", "Courier New", monospace; font-size: 1.1rem; padding: 8px; line-height: 1.6; }
+  #output { background: #f0f4ff; font-family: "Tlwg Typewriter", "TlwgTypewriter", "Tlwg Mono", "TlwgMono", "Consolas", "Courier New", monospace; }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .pane { display: flex; flex-direction: column; min-width: 0; }
+  .pane textarea { flex: 1; min-height: 60vh; resize: vertical; white-space: pre; overflow: auto; }
+  @media (max-width: 760px) { .panes { grid-template-columns: 1fr; } .pane textarea { min-height: 35vh; } }
+  .opts { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; align-items: center; }
+  .rules { font-size: .9rem; background: #fff; border: 1px solid #ddd; padding: 8px 12px; border-radius: 6px; }
+  code { background: #eee; padding: 0 4px; border-radius: 3px; }
+  #errors { color: #b00020; font-size: .9rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>ตัวแปลงโน้ตฆ้องวงใหญ่ บรรทัดเดียว → สองบรรทัด</h1>
+
+<div class="rules">
+  <b>เงื่อนไขที่รองรับตอนนี้</b>
+  <ol>
+    <li><code>x/8</code> — <code>x</code> คือโน้ต 1–7 (หรือ ด ร ม ฟ ซ ล ท), <code>/8</code> = โน้ตคู่ต่ำห่างไป 8 เสียง (คู่แปด).
+        <code>/n</code> อื่น ๆ = โน้ตคู่ต่ำห่างไป n เสียง (นับรวมตัวเอง เช่น <code>5/3</code> → บน ซ ล่าง ม)</li>
+    <li><code>x+</code> — โน้ตที่มี <code>+</code> ต่อท้าย จะไปอยู่บรรทัดล่าง (บรรทัดบนเว้นเป็น <code>-</code>)</li>
+    <li><code>x*</code> = เสียงสูง, <code>x.</code> = เสียงต่ำ, <code>8</code> = <code>1*</code>, <code>9</code> = <code>2*</code>.
+        รูปแบบ <code>-x.xx</code> หรือ <code>-xx*x*</code> (ตัวแรกต่ำกว่าอีกสองตัวหนึ่งช่วงเสียง) → ตัวแรกอยู่บรรทัดล่าง สองตัวหลังอยู่บรรทัดบน</li>
+    <li>ปุ่ม <b>เติม +</b> — หาโน้ตรูปแบบ <code>-x/x-x/x -x/x-x. xx-x. xx-x/x</code> แล้วเติม <code>+</code> เป็น
+        <code>-x/x-x/x -x/x-x.+ xx-x.+ xx-x/x</code> (x มี <code>.</code> / <code>*</code> หรือไม่ก็ได้)</li>
+  </ol>
+  ข้อความในวงเล็บ <code>( ... )</code> จะไม่ถูกแปลง. โน้ตเดี่ยวอยู่บรรทัดบน. เครื่องหมายอื่น (<code>-</code>, เว้นวรรค ฯลฯ) จะถูกคัดลอกไปทั้งสองบรรทัด
+</div>
+
+<div class="opts">
+  <button type="button" id="addPlus">เติม +</button>
+  <span id="plusStatus"></span>
+</div>
+
+<div class="opts">
+  <label style="margin:0">แสดงผลเป็น:
+    <select id="outMode">
+      <option value="thai">ตัวอักษรไทย (ด ร ม …)</option>
+      <option value="num">ตัวเลข (1 2 3 …)</option>
+      <option value="same">ตามที่พิมพ์</option>
+    </select>
+  </label>
+  <label style="margin:0"><input type="checkbox" id="markLow" checked> ใส่เครื่องหมายช่วงเสียง (ไทย: ฺ ต่ำ / ํ สูง, ตัวเลข: . ต่ำ / * สูง)</label>
+  <label style="margin:0"><input type="checkbox" id="syncScroll" checked> เลื่อนสองช่องไปพร้อมกัน</label>
+</div>
+
+<div class="panes">
+  <div class="pane">
+    <label for="input">โน้ตบรรทัดเดียว (แต่ละบรรทัดของ input แปลงแยกกัน)</label>
+    <textarea id="input" wrap="off" spellcheck="false" placeholder="เช่น ---1/8---3/8---5/3---2/5">(ท่อน 1)
+---1/8---3/8---5/3---2/5
+---5+---6---7+---1/8 (กลับต้น 2 เที่ยว)
+-5.66-ด.รร-355*-6.11-299-188
+-1/8-1/8 -1/8-5. 66-5. 66-1/8</textarea>
+  </div>
+  <div class="pane">
+    <label for="output">ผลลัพธ์ (สองบรรทัด)</label>
+    <textarea id="output" readonly wrap="off"></textarea>
+  </div>
+</div>
+<div id="errors"></div>
+
+<script>
+const THAI = ['ด', 'ร', 'ม', 'ฟ', 'ซ', 'ล', 'ท'];
+const MARK = {
+  thai: { low: 'ฺ', high: 'ํ' },  // พินทุ ฺ  / นิคหิต ํ
+  num:  { low: '.', high: '*' },  // ระบบตัวเลข: เสียงต่ำใช้ . / เสียงสูงใช้ * (ต่อท้ายตามปกติ)
+};
+
+// อ่านตัวโน้ตหนึ่งตัว → { idx 0–6, oct, thai } หรือ null
+function readNote(ch) {
+  if (/^[1-7]$/.test(ch)) return { idx: Number(ch) - 1, oct: 0, thai: false };
+  if (ch === '8') return { idx: 0, oct: 1, thai: false };   // 8 = 1*
+  if (ch === '9') return { idx: 1, oct: 1, thai: false };   // 9 = 2*
+  const t = THAI.indexOf(ch);
+  return t === -1 ? null : { idx: t, oct: 0, thai: true };
+}
+
+// แสดงโน้ต idx 0–6 ที่ช่วงเสียง oct (0 = กลาง, <0 ต่ำ, >0 สูง)
+function renderNote(idx, oct, isThaiInput) {
+  const mode = document.getElementById('outMode').value;
+  const useThai = mode === 'thai' || (mode === 'same' && isThaiInput);
+  let s = useThai ? THAI[idx] : String(idx + 1);
+  if (oct !== 0 && document.getElementById('markLow').checked) {
+    const m = MARK[useThai ? 'thai' : 'num'];
+    s += (oct < 0 ? m.low : m.high).repeat(Math.abs(oct));
+  }
+  return s;
+}
+
+// แยกบรรทัดเป็น token: { type:'char', ch } หรือ { type:'note', idx, oct, thai, row, gap }
+//   row: 'top' (ปกติ) | 'bottom' (มือซ้าย/ตัวแรกของกลุ่ม 3 ตัว) | 'pair' (x/n)
+function tokenize(line, errors) {
+  const chars = Array.from(line);
+  const tokens = [];
+  for (let i = 0; i < chars.length; i++) {
+    // ข้อความในวงเล็บ ( ... ) → คัดลอกตามเดิม ไม่แปลง (รองรับวงเล็บซ้อน)
+    if (chars[i] === '(') {
+      let depth = 0;
+      for (; i < chars.length; i++) {
+        tokens.push({ type: 'char', ch: chars[i] });
+        if (chars[i] === '(') depth++;
+        if (chars[i] === ')' && --depth === 0) break;
+      }
+      continue;
+    }
+    const n = readNote(chars[i]);
+    if (!n) { tokens.push({ type: 'char', ch: chars[i] }); continue; }
+    const tok = { type: 'note', ...n, row: 'top' };
+    // เครื่องหมายช่วงเสียงต่อท้าย: * สูง, . ต่ำ (ซ้อนได้)
+    while (chars[i + 1] === '*' || chars[i + 1] === '.') {
+      tok.oct += chars[i + 1] === '*' ? 1 : -1;
+      i++;
+    }
+    if (chars[i + 1] === '+') {                      // x+ → บรรทัดล่าง
+      tok.row = 'bottom';
+      i++;
+    } else {
+      const m = /^\/(\d+)/.exec(chars.slice(i + 1).join(''));
+      if (m) {                                       // x/n → คู่ต่ำ
+        tok.row = 'pair';
+        tok.gap = Number(m[1]);
+        if (tok.gap < 1) errors.push(`ช่วงห่าง /${tok.gap} ไม่ถูกต้อง`);
+        i += m[0].length;
+      }
+    }
+    tokens.push(tok);
+  }
+  return tokens;
+}
+
+// -x.xx / -xx*x* : ตัวแรกต่ำกว่าสองตัวหลังหนึ่งช่วงเสียง → ตัวแรกลงบรรทัดล่าง
+function applyTriplets(tokens) {
+  const plain = t => t && t.type === 'note' && t.row === 'top';
+  for (let i = 1; i + 2 < tokens.length; i++) {
+    const [a, b, c] = [tokens[i], tokens[i + 1], tokens[i + 2]];
+    if (tokens[i - 1].type === 'char' && tokens[i - 1].ch === '-' &&
+        plain(a) && plain(b) && plain(c) &&
+        b.oct === a.oct + 1 && c.oct === a.oct + 1) {
+      a.row = 'bottom';
+      i += 2;
+    }
+  }
+}
+
+function convertLine(line) {
+  const errors = [];
+  const tokens = tokenize(line, errors);
+  applyTriplets(tokens);
+  let top = '', bottom = '';
+  for (const t of tokens) {
+    if (t.type === 'char') { top += t.ch; bottom += t.ch; continue; }
+    const note = renderNote(t.idx, t.oct, t.thai);
+    if (t.row === 'top')    { top += note; bottom += '-'; }
+    if (t.row === 'bottom') { top += '-';  bottom += note; }
+    if (t.row === 'pair') {
+      const lowAbs = t.oct * 7 + t.idx - (t.gap - 1); // นับรวมตัวเอง: /8 = คู่แปด
+      const lowIdx = ((lowAbs % 7) + 7) % 7;
+      top += note;
+      bottom += renderNote(lowIdx, Math.floor(lowAbs / 7), t.thai);
+    }
+  }
+  return { top, bottom, errors };
+}
+
+// lineMap[k] = บรรทัดใน output ที่ผลของ input บรรทัด k เริ่มต้น (ใช้เลื่อนสองช่องให้ตรงกัน)
+let lineMap = [0];
+
+function update() {
+  const lines = document.getElementById('input').value.split('\n');
+  const out = [];
+  const errs = [];
+  let outLine = 0;
+  lineMap = [];
+  lines.forEach((line, n) => {
+    lineMap[n] = outLine;
+    if (line.trim() === '') return;
+    // บรรทัดที่มีแต่ข้อความในวงเล็บ (เช่น ชื่อท่อน) → แสดงบรรทัดเดียวตามเดิม
+    if (line.replace(/\([^()]*\)/g, '').trim() === '') {
+      out.push(line);
+      outLine += 2;                                  // บรรทัดข้อความ + บรรทัดว่าง
+      return;
+    }
+    const r = convertLine(line);
+    out.push(r.top + '\n' + r.bottom);
+    outLine += 3;                                    // บน + ล่าง + บรรทัดว่าง
+    r.errors.forEach(e => errs.push(`บรรทัด ${n + 1}: ${e}`));
+  });
+  // บรรทัดบน / บรรทัดล่าง / บรรทัดว่าง สลับกันไปเรื่อย ๆ
+  document.getElementById('output').value = out.join('\n\n');
+  document.getElementById('errors').textContent = errs.join('\n');
+}
+
+// ===== ตรวจหา/เติม + ในรูปแบบ -x/x-x/x -x/x-x xx-x xx-x/x =====
+// N = โน้ตหนึ่งตัว (มี . หรือ * ต่อท้ายหรือไม่ก็ได้), ต้องจบครบทั้งเครื่องหมายและยังไม่มี + หรือ / ตามหลัง
+const N = '[1-9ดรมฟซลท][.*]*';
+const END = '(?![.*+/])';
+const PAIR = `${N}/\\d+`;
+const PLUS_RE = new RegExp(
+  `(-${PAIR}-${PAIR}\\s*-${PAIR}-${N}${END})` +   // -x/x-x/x -x/x-x   ← เติม + หลังตัวนี้
+  `(\\s*${N}${N}-${N}${END})` +                   //  xx-x            ← เติม + หลังตัวนี้
+  `(\\s*${N}${N}-${PAIR})`,                       //  xx-x/x
+  'g');
+
+// คืนรายการจุดที่พบ [{ line, text }]
+function findPlusPatterns(text) {
+  const found = [];
+  text.split('\n').forEach((line, n) => {
+    for (const m of line.matchAll(PLUS_RE)) found.push({ line: n + 1, text: m[0] });
+  });
+  return found;
+}
+
+function addPlus(text) {
+  return text.replace(PLUS_RE, (m, a, b, c) => `${a}+${b}+${c}`);
+}
+
+function updatePlusStatus() {
+  const found = findPlusPatterns(document.getElementById('input').value);
+  document.getElementById('addPlus').disabled = found.length === 0;
+  document.getElementById('plusStatus').textContent = found.length
+    ? `พบ ${found.length} จุดที่เติม + ได้: ` + found.map(f => `บรรทัด ${f.line} "${f.text}"`).join(', ')
+    : 'ไม่พบรูปแบบที่ต้องเติม +';
+}
+
+document.getElementById('addPlus').addEventListener('click', () => {
+  const el = document.getElementById('input');
+  el.value = addPlus(el.value);
+  update();
+  updatePlusStatus();
+});
+document.getElementById('input').addEventListener('input', updatePlusStatus);
+updatePlusStatus();
+
+['input', 'outMode', 'markLow'].forEach(id => {
+  document.getElementById(id).addEventListener('input', update);
+  document.getElementById(id).addEventListener('change', update);
+});
+update();
+
+// ===== เลื่อน input / output ไปพร้อมกัน โดยให้บรรทัด input ตรงกับผลของมัน =====
+(function () {
+  const inEl = document.getElementById('input');
+  const outEl = document.getElementById('output');
+  const lineH = el => parseFloat(getComputedStyle(el).lineHeight) || 20;
+  let lock = null;   // กันการเลื่อนวนกลับไปมา
+
+  function follow(src, dst, toDst) {
+    if (!document.getElementById('syncScroll').checked) return;
+    if (lock && lock !== src) return;
+    lock = src;
+    const pos = src.scrollTop / lineH(src);          // บรรทัดบนสุดที่เห็น (มีเศษได้)
+    dst.scrollTop = toDst(pos) * lineH(dst);
+    dst.scrollLeft = src.scrollLeft;
+    requestAnimationFrame(() => { lock = null; });
+  }
+
+  // input บรรทัด pos → output บรรทัด
+  const inToOut = pos => {
+    const k = Math.min(Math.floor(pos), lineMap.length - 1);
+    return (lineMap[k] || 0) + (pos - Math.floor(pos));
+  };
+  // output บรรทัด pos → input บรรทัด (หา k สุดท้ายที่ lineMap[k] <= pos)
+  const outToIn = pos => {
+    let k = 0;
+    while (k + 1 < lineMap.length && lineMap[k + 1] <= pos) k++;
+    return k;
+  };
+
+  inEl.addEventListener('scroll', () => follow(inEl, outEl, inToOut));
+  outEl.addEventListener('scroll', () => follow(outEl, inEl, outToIn));
+})();
+</script>
+</body>
+</html>

@@ -45,64 +45,103 @@ JavaScript สำหรับการแปลงโน้ตดนตรีไ
 >
 
 <div id="replacementResult">Regex replacement ของโน้ตฆ้องที่เลือก จะปรากฏที่นี่</div>
+<div>ผลลัพธ์พร้อมใช้: <code id="replaceLine"></code></div>
+<div>ทดสอบกับตัวอย่าง: <code id="replaceTest"></code></div>
   <script>
+// ===============================
+// ตัวสร้าง regex สำหรับโน้ตฆ้องบรรทัดเดียว
+//   ช่องที่ 1: พิมพ์ตัวอย่างโน้ต เช่น  -1/8-3/8   หรือ  -x/8-x/8
+//   ช่องที่ 2: พิมพ์ผลที่ต้องการ เช่น  -1-3       (บรรทัดบน)
+//                                   -8-8       (บรรทัดล่าง)
+//   -> .replace(/-(\d)\/(\d)-(\d)\/(\d)/g, "-$1-$3")
+// ===============================
 const input = document.getElementById('inputText');
 const output = document.getElementById('outputText');
-
-input.addEventListener('input', () => {
-
-    const text = input.value;
-    let regexPattern = '';
-
-    for (let ch of text) {
-
-        if (/\d/.test(ch)) {
-            regexPattern += '(\\d)';
-
-        } else if (ch === '.') {
-            regexPattern += '\\.';
-
-        } else if (ch === '*') {
-            regexPattern += '\\*';
-
-        } else if (ch === '/') {
-            regexPattern += '\\/';
-
-        } else {
-            regexPattern += ch;
-        }
-    }
-console.log(regexPattern);
-    output.textContent =
-        regexPattern || 'Regex pattern ของโน้ตฆ้องบรรทัดเดียว';
-});
-
-
-// ===============================
-// Replacement
-// ===============================
 const replacement = document.getElementById('replacement');
 const result = document.getElementById('replacementResult');
+const replaceLine = document.getElementById('replaceLine');
+const replaceTest = document.getElementById('replaceTest');
 
-replacement.addEventListener('input', () => {
+// ตัวโน้ต (ตัวเลข, x = ตัวแทนโน้ตใดๆ, อักษรไทย ด-ท)
+const NOTE_CHAR = /[\dxดรมฟซลท]/;
+const THAI_TO_NUM = { 'ด': '1', 'ร': '2', 'ม': '3', 'ฟ': '4', 'ซ': '5', 'ล': '6', 'ท': '7' };
+const norm = ch => THAI_TO_NUM[ch] || ch;
 
-    const text = replacement.value;
-    
-    let outputreplacement = '';
+// escape อักขระพิเศษของ regex ทั้งหมด (รวม + ที่ใช้เป็นมือซ้าย และ / ของ regex literal)
+const escapeRegex = ch => ch.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
 
-    for (let ch of text) {
-
-        if (/[ดรมฟซลท\d]/.test(ch)) {
-            outputreplacement += '\\$\\d';
+// คืนค่า { source, groups } โดย groups[i] = ตัวอย่างโน้ตของกลุ่มที่ i+1
+function buildPattern(text) {
+    let source = '';
+    const groups = [];
+    for (const ch of text) {
+        if (NOTE_CHAR.test(ch)) {
+            groups.push(norm(ch));
+            source += '(\\d)';
         } else {
-            outputreplacement += ch;
+            source += escapeRegex(ch);
         }
-
     }
+    return { source, groups };
+}
 
-    result.textContent = outputreplacement;
+// แปลงโน้ตในช่อง replacement เป็น $n โดยจับคู่กับโน้ตตัวเดียวกันในช่อง pattern
+// ที่ยังไม่ถูกใช้ โดยหาถัดจากตัวที่จับคู่ล่าสุดก่อน (อ่านซ้ายไปขวา) แล้วค่อยวนหาจากต้น
+// พิมพ์ $n ตรงๆ ได้เช่นกัน — โน้ตที่หาคู่ไม่เจอจะคงไว้เป็นตัวอักษรตามเดิม
+function buildReplacement(text, groups) {
+    const used = groups.map(() => false);
+    let last = -1;
+    let out = '';
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const ref = /^\$(\d+)/.exec(text.slice(i));
+        if (ref) {
+            out += ref[0];
+            last = Number(ref[1]) - 1;
+            if (used[last] !== undefined) used[last] = true;
+            i += ref[0].length - 1;
+            continue;
+        }
+        if (NOTE_CHAR.test(ch)) {
+            const free = (g, k) => !used[k] && g === norm(ch);
+            let idx = groups.findIndex((g, k) => k > last && free(g, k));
+            if (idx === -1) idx = groups.findIndex(free);
+            if (idx !== -1) {
+                used[idx] = true;
+                last = idx;
+                out += '$' + (idx + 1);
+                continue;
+            }
+        }
+        out += ch;
+    }
+    return out;
+}
 
-});
+function update() {
+    const { source, groups } = buildPattern(input.value);
+    const rep = buildReplacement(replacement.value, groups);
+
+    output.textContent = source || 'Regex pattern ของโน้ตฆ้องบรรทัดเดียว จะปรากฏที่นี่';
+    result.textContent = rep || 'Regex replacement ของโน้ตฆ้องที่เลือก จะปรากฏที่นี่';
+
+    if (!source) {
+        replaceLine.textContent = '';
+        replaceTest.textContent = '';
+        return;
+    }
+    replaceLine.textContent = `.replace(/${source}/g, "${rep}")`;
+    try {
+        // ทดสอบกับตัวอย่าง (แทน x ด้วยเลข 1 เพื่อให้ match ได้)
+        const sample = [...input.value].map(c => c === 'x' ? '1' : norm(c)).join('');
+        replaceTest.textContent = `${sample} → ${sample.replace(new RegExp(source, 'g'), rep)}`;
+    } catch (e) {
+        replaceTest.textContent = 'regex ไม่ถูกต้อง: ' + e.message;
+    }
+}
+
+input.addEventListener('input', update);
+replacement.addEventListener('input', update);
   </script>
 <div class="flex-container">
     <div>

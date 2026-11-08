@@ -163,6 +163,10 @@ body {
   margin-top: 5px;
 }
 
+table {
+  border-collapse: collapse;
+}
+
 table.active {
   border: 3px solid red;
 }
