@@ -22,24 +22,15 @@ HTMLTableOutput = HTMLTableOutput.replace(/\[(.*?)\]/g, '<small>$1</small>');
 //ลบแท็กที่ไม่เกี่ยวข้องกับ <a>
 HTMLTableOutput = HTMLTableOutput.replace(/\<a\<\/td\>\<td\>/gm, '<a ');
 
-// แก้ตำแหน่งของเลข 8 ที่แสดงด้านล่างตัวโน้ต
-HTMLTableOutput = HTMLTableOutput.replace(/8\/8/g, '1/8*');
-HTMLTableOutput = HTMLTableOutput.replace(/9\/8/g, '2/8*');
-HTMLTableOutput = HTMLTableOutput.replace(/3\*\/8/g, '3/8*');
-
-//ตัวแปลงเลขขั้นคู่ของโน้ตมือฆ้อง
-//
-HTMLTableOutput = HTMLTableOutput.replace(/\$/g, '/e');
-HTMLTableOutput = HTMLTableOutput.replace(/\/8/g, '/e');
-HTMLTableOutput = HTMLTableOutput.replace(/\/7/g, '/iiiiiiii');
-HTMLTableOutput = HTMLTableOutput.replace(/\/6/g, '/s');
-HTMLTableOutput = HTMLTableOutput.replace(/\/5/g, '/iiiii');
-//
-HTMLTableOutput = HTMLTableOutput.replace(/f/g, '/f');
-HTMLTableOutput = HTMLTableOutput.replace(/\/4/g, '/f');
-HTMLTableOutput = HTMLTableOutput.replace(/\/3/g, '/iii');
-HTMLTableOutput = HTMLTableOutput.replace(/\/2/g, '/t');
-HTMLTableOutput = HTMLTableOutput.replace(/\/1/g, '/i');
+//ตัวแปลงเลขหลังทับ (เลขขั้นคู่ของโน้ตมือฆ้อง / ตำแหน่งนิ้ว) แสดงเป็นเลขด้านล่างตัวโน้ต
+// รูปแบบ: เลขหลักเดียว 1/8 , เลขสองหลัก (10-16) ใส่วงเล็บ 1/(12)
+// ทางลัดเดิม: $ = /8 , f = /4
+HTMLTableOutput = HTMLTableOutput.replace(/\$/g, '/8');
+HTMLTableOutput = HTMLTableOutput.replace(/\/?f/g, '/4');
+// เข้ารหัสเลขเป็นอักขระพิเศษ (Private Use Area) เพื่อไม่ให้ถูกแปลงเป็นตัวโน้ตในขั้นถัดไป
+const SLASH_OPEN = '\uE000', SLASH_CLOSE = '\uE001';
+HTMLTableOutput = HTMLTableOutput.replace(/\/(?:\((1[0-6]|[1-9])\)|([1-9]))/g, (m, twoDigit, oneDigit) =>
+  SLASH_OPEN + (twoDigit || oneDigit).replace(/\d/g, d => String.fromCharCode(0xE010 + Number(d))) + SLASH_CLOSE);
 HTMLTableOutput = HTMLTableOutput.replace(/8/g, '1*');
 
 //แปลงตัวเลขเป็นตัวโน้ต
@@ -95,7 +86,15 @@ HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(ii)/g,
 HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(i)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>1</small></span>');
 HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\\(0)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: 0.86em; left: 50%; transform: translateX(-50%);\"><small>0</small></span>');
 
-//ตัวเลขแสดงตำแหน่งนิ้วซอ เลขโรมัน แสดงเลขด้านล่าง
+//เลขหลังทับ (ที่เข้ารหัสไว้ด้านบน) แสดงเลขด้านล่างตัวโน้ต รวมเครื่องหมายเสียงสูง/ต่ำไว้ในตัวโน้ตด้วย
+HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลท][ํฺ]?|ํ)\uE000([\uE010-\uE019]+)\uE001/g, (m, note, code) =>
+  '<span style=\"display: inline-block; position: relative;\">' + note + '<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>' +
+  code.replace(/[\uE010-\uE019]/g, c => c.charCodeAt(0) - 0xE010) + '</small></sub></span>');
+// เลขหลังทับที่ไม่มีตัวโน้ตนำหน้า แสดงเป็นข้อความ /เลข ตามเดิม
+HTMLTableOutput = HTMLTableOutput.replace(/\uE000([\uE010-\uE019]+)\uE001/g, (m, code) =>
+  '/' + code.replace(/[\uE010-\uE019]/g, c => c.charCodeAt(0) - 0xE010));
+
+//ตัวเลขแสดงตำแหน่งนิ้วซอ เลขโรมัน แสดงเลขด้านล่าง (กรณีพิมพ์เลขโรมันเอง เช่น 1/iii)
 HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiiiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>8</small></span>');
 HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(e)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>8</small></span>');
 HTMLTableOutput = HTMLTableOutput.replace(/([ดรมฟซลทํ])\/(iiiiiii)/g, '<span style=\"display: inline-block; position: relative;\">$1<sub style=\"position: absolute; bottom: -0.5em; left: 50%; transform: translateX(-50%);\"><small>7</small></span>');
