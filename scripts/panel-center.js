@@ -337,3 +337,11 @@ hFontSelect.value = savedHFont;
 tableFontSelect.value = savedTableFont;
 
 applyFonts();
+// === PWA: โหลด script-pwa.js เพื่อให้ทุกหน้าใช้งานออฟไลน์ได้ ===
+(function () {
+  var cur = document.currentScript;
+  if (!cur || window.__thmPwaLoaded) return;
+  var s = document.createElement('script');
+  s.src = new URL('../script-pwa.js', cur.src).href;
+  document.body.appendChild(s);
+})();
