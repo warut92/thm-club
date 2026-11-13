@@ -59,18 +59,22 @@
 	</style>
 </head>
 <body>
-<h1>ตัวแปลงโน้ตดนตรีไทย ดรมฟ (thmjs) เป็นโน้ตสากล ผ่านระบบ ABC</h1>
+<h1>ตัวแปลงโน้ตดนตรีไทย ระบบ 1234 (thmjs) เป็นโน้ตสากล ผ่านระบบ ABC (รุ่นทดลอง)</h1>
 
 <details>
 	<summary>วิธีใช้และรูปแบบโน้ตที่รองรับ</summary>
+	<p>อ่านวิธีพิมพ์โน้ตแบบละเอียดได้ที่ <a href="thmjs-guide.html">คู่มือการพิมพ์โน้ต thmjs</a></p>
 	<ul>
 		<li><code>1-7</code> = ด ร ม ฟ ซ ล ท, <code>8</code> = ดํ, <code>9</code> = รํ</li>
 		<li><code>*</code> หลังโน้ต = เสียงสูง (ใส่ซ้ำได้), <code>.</code> หลังโน้ต = เสียงต่ำ</li>
 		<li><code>-</code> = ลากเสียง หรือ เงียบ (เลือกได้ด้านล่าง)</li>
+		<li><code>x</code> = ตัวหยุด 1 ช่อง, พิมพ์ <code>x</code> ติดกันเพื่อหยุดยาวขึ้น เช่น <code>xx</code> = 2 ช่อง</li>
+		<li><code>[ ]</code> = โน้ตในวงเล็บยาวครึ่งหนึ่ง (2 ตัวเท่ากับ 1 ช่อง), <code>[[ ]]</code> = ยาว 1/4 (4 ตัวเท่ากับ 1 ช่อง) — แสดงเส้นโค้งคลุมกลุ่มโน้ต เช่น <code>-5[65]3</code>, <code>-[[1235]]-5</code></li>
 		<li>เว้นวรรคคั่นห้องละ 4 ตัว ตัวสุดท้ายของห้องคือจังหวะตก</li>
 		<li><code>(ชื่อเพลง)</code> = ชื่อเพลง (ขึ้นเพลงใหม่), <code>([ท่อน_%1])</code> = ข้อความกำกับท่อน</li>
 		<li><code>//</code> = กลับต้น (แปลงเป็นเครื่องหมายย้อน <code>|: ... :|</code>)</li>
-		<li>เครื่องหมายประกอบ เช่น <code>^ v { } + = o t</code>, ตำแหน่งนิ้ว <code>\๑ /8</code> จะถูกข้ามไป</li>
+		<li><code>/เลข</code> หลังโน้ต = เสียงคู่ (ขั้นคู่) ตีพร้อมกัน เช่น <code>8/8</code> = ดํ คู่กับ ด (คู่ 8), <code>5/4</code> = ซ คู่กับ ด (คู่ 4), เลขสองหลักใส่วงเล็บ <code>/(10)</code>; ทางลัด <code>$</code> = /8, <code>f</code> = /4 — แปลงเป็นโน้ตคู่ (คอร์ด) ในโน้ตสากล</li>
+		<li>เครื่องหมายประกอบ เช่น <code>^ v { } + = o t</code>, ตำแหน่งนิ้ว <code>\๑ \iii</code> จะถูกข้ามไป</li>
 		<li>บรรทัดที่มีตัวอักษรไทย (เช่น โน้ตหน้าทับ) จะถูกข้าม</li>
 	</ul>
 </details>
@@ -114,6 +118,14 @@
 		<select id="optHold">
 			<option value="sustain" selected>ลากเสียง</option>
 			<option value="rest">เงียบ</option>
+		</select>
+	</label>
+	<label title="เลขหลังทับ เช่น /8 = ตีเสียงคู่ 8 พร้อมกัน">
+		เสียงคู่ (/8 /4 ...)
+		<select id="optPair">
+			<option value="down" selected>คู่ลงล่าง</option>
+			<option value="up">คู่ขึ้นบน</option>
+			<option value="none">ไม่แสดง</option>
 		</select>
 	</label>
 	<label>ความเร็ว ♩=
@@ -163,10 +175,12 @@
 // =====================================================================
 const THM2ABC = (() => {
 	const LETTERS = "CDEFGAB";
-	// ความยาวโน้ตที่เขียนเป็นตัวเดียวได้ (หน่วย = 1 ช่อง)
-	const VALID_LEN = [16, 14, 12, 8, 7, 6, 4, 3, 2, 1];
+	// 1 ช่อง (โน้ต 1 ตัว) = 4 tick เพื่อรองรับโน้ตใน [ ] (1/2) และ [[ ]] (1/4)
+	const TPS = 4;
+	// ความยาวโน้ตที่เขียนเป็นตัวเดียวได้ (หน่วย = tick)
+	const VALID_LEN = [64, 56, 48, 32, 28, 24, 16, 14, 12, 8, 7, 6, 4, 3, 2, 1];
 	const KEYS = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, Bb: 6 };
-	const DECORATIONS = "^v{}+=otqf$";
+	const DECORATIONS = "^v{}+=otq";
 
 	function cleanText(s) {
 		return s.replace(/[\[\]]/g, "")
@@ -178,30 +192,58 @@ const THM2ABC = (() => {
 	}
 
 	// แยกโน้ต 1 ห้อง (เช่น "-5*-3*") เป็นช่อง
-	function tokenizeGroup(g) {
+	// st = สถานะที่ต่อเนื่องทั้งบรรทัด { depth: ระดับวงเล็บ [ ], slur: เลขกลุ่มโค้ง, nextSlur }
+	// ความยาวช่องเก็บเป็น tick: ปกติ = 4, ใน [ ] = 2, ใน [[ ]] = 1
+	function tokenizeGroup(g, st) {
 		const slots = [];
 		const unknown = [];
 		let i = 0;
+		const ticks = () => TPS >> Math.min(st.depth, 2);
+		const slur = () => st.depth ? st.slur : 0;
 		const last = () => {
 			const s = slots[slots.length - 1];
-			return s && !s.hold ? s : null;
+			return s && !s.hold && !s.rest ? s : null;
 		};
 		while (i < g.length) {
 			const c = g[i];
 			if (c >= "1" && c <= "9") {
-				if (c === "8") slots.push({ deg: 0, oct: 1 });
-				else if (c === "9") slots.push({ deg: 1, oct: 1 });
-				else slots.push({ deg: +c - 1, oct: 0 });
+				const n = { deg: +c - 1, oct: 0, t: ticks(), slur: slur() };
+				if (c === "8") { n.deg = 0; n.oct = 1; }
+				else if (c === "9") { n.deg = 1; n.oct = 1; }
+				slots.push(n);
 				i++;
 			} else if (c === "-") {
-				slots.push({ hold: true });
+				slots.push({ hold: true, t: ticks() });
+				i++;
+			} else if (c === "x") {
+				// ตัวหยุด (x ติดกันหลายตัว = หยุดยาวขึ้น)
+				slots.push({ rest: true, t: ticks() });
+				i++;
+			} else if (c === "[") {
+				if (!st.depth) st.slur = ++st.nextSlur;
+				st.depth++;
+				i++;
+			} else if (c === "]") {
+				if (st.depth) st.depth--;
 				i++;
 			} else if (c === "*" || c === ".") {
 				const n = last();
 				if (n) n.oct += c === "*" ? 1 : -1;
 				i++;
+			} else if (c === "$" || c === "f") {
+				// ทางลัด: $ = /8 , f = /4
+				const n = last();
+				if (n) n.pair = c === "$" ? 8 : 4;
+				i++;
+			} else if (c === "/" && /^\/(\((1[0-6]|[1-9])\)|[1-9]|[efst](?!i))/.test(g.slice(i))) {
+				// เลขขั้นคู่ใต้ตัวโน้ต เช่น /8  /3  /(10)  (ทางลัด /e=8 /s=6 /f=4 /t=2)
+				const m = g.slice(i).match(/^\/(?:\((1[0-6]|[1-9])\)|([1-9])|([efst]))/);
+				const n = last();
+				const pair = m[3] ? { e: 8, s: 6, f: 4, t: 2 }[m[3]] : +(m[1] || m[2]);
+				if (n) n.pair = pair;
+				i += m[0].length;
 			} else if (c === "\\" || c === "/") {
-				// เลขนิ้ว/ตำแหน่ง เช่น \๑  /8  \iii  \+
+				// เลขนิ้ว/ตำแหน่ง เช่น \๑  \iii  \+  /iii  /+
 				i++;
 				if (g[i] === "i") { while (g[i] === "i") i++; }
 				else i++;
@@ -220,6 +262,7 @@ const THM2ABC = (() => {
 		const tunes = [];
 		const warnings = [];
 		let tune = null;
+		const st = { depth: 0, slur: 0, nextSlur: 0 };
 		const newTune = (title) => {
 			tune = { title, items: [] };
 			tunes.push(tune);
@@ -256,16 +299,19 @@ const THM2ABC = (() => {
 
 			if (!tune) newTune("");
 			const slots = [];
+			st.depth = 0;
 			line.split(/\s+/).forEach((g, gi) => {
-				const r = tokenizeGroup(g);
+				const r = tokenizeGroup(g, st);
 				if (r.unknown.length) {
 					warnings.push(`บรรทัด ${lineNo + 1} ห้องที่ ${gi + 1} "${g}": ไม่รู้จักเครื่องหมาย ${r.unknown.join(" ")}`);
 				}
-				if (r.slots.length !== 4) {
-					warnings.push(`บรรทัด ${lineNo + 1} ห้องที่ ${gi + 1} "${g}": มี ${r.slots.length} ตัว (ควรมี 4)`);
+				const total = r.slots.reduce((a, s) => a + s.t, 0);
+				if (total !== 4 * TPS) {
+					warnings.push(`บรรทัด ${lineNo + 1} ห้องที่ ${gi + 1} "${g}": ยาว ${total / TPS} ตัว (ควรมี 4)`);
 				}
 				r.slots.forEach(s => { s.line = lineNo; slots.push(s); });
 			});
+			if (st.depth) warnings.push(`บรรทัด ${lineNo + 1}: วงเล็บ [ ] ไม่ครบคู่`);
 			if (slots.length) tune.items.push({ type: "notes", slots });
 		});
 		return { tunes, warnings };
@@ -285,19 +331,35 @@ const THM2ABC = (() => {
 		return s;
 	}
 
-	function lenStr(n) {
-		return n === 1 ? "" : String(n);
+	// โน้ต 1 ตัว (รวมเสียงคู่ถ้ามี) -> ABC เช่น  c  หรือ  [Cc]
+	function noteToAbc(note, opts) {
+		const main = pitchToAbc(note.deg, note.oct, opts);
+		if (!note.pair || note.pair < 2 || opts.pair === "none") return main;
+		const step = (note.pair - 1) * (opts.pair === "up" ? 1 : -1);
+		const abs = note.deg + note.oct * 7 + step;
+		const deg = ((abs % 7) + 7) % 7;
+		const other = pitchToAbc(deg, Math.floor(abs / 7), opts);
+		return step < 0 ? `[${other}${main}]` : `[${main}${other}]`;
+	}
+
+	// ความยาว (tick) -> ข้อความ ABC เทียบกับ L:1/unit เช่น 4 -> "", 8 -> "2", 2 -> "/2", 6 -> "3/2"
+	function lenStr(t) {
+		let n = t, d = TPS;
+		while (d > 1 && n % 2 === 0) { n /= 2; d /= 2; }
+		if (d === 1) return n === 1 ? "" : String(n);
+		return (n === 1 ? "" : String(n)) + "/" + d;
 	}
 
 	// แบ่งเพลงเป็นช่วงตามเครื่องหมายกลับต้น //
 	function segmentsOf(tune) {
 		const segs = [];
 		let cur = { slots: [], labels: [], repeat: false };
+		const ticksOf = c => c.slots.reduce((a, s) => a + s.t, 0);
 		tune.items.forEach(it => {
 			if (it.type === "notes") {
 				cur.slots.push(...it.slots);
 			} else if (it.type === "label") {
-				cur.labels.push({ pos: cur.slots.length, text: it.text });
+				cur.labels.push({ pos: ticksOf(cur), text: it.text });
 			} else if (it.type === "repeat") {
 				if (cur.slots.length) {
 					cur.repeat = true;
@@ -312,20 +374,32 @@ const THM2ABC = (() => {
 
 	// แปลง 1 ช่วง -> ข้อความ ABC
 	function renderSegment(seg, opts) {
-		const { barLen, beatLen } = opts;
-		const pad = opts.shift ? 1 : 0;
-		const n = seg.slots.length;
+		// หน่วยทั้งหมดในฟังก์ชันนี้เป็น tick
+		const barLen = opts.barLen * TPS;
+		const beatLen = opts.beatLen * TPS;
+		const pad = opts.shift ? TPS : 0;
 
 		// 1) รวมช่องเป็นโน้ต {start, len, note}
 		const events = [];
-		seg.slots.forEach((s, i) => {
+		let at = 0;
+		seg.slots.forEach(s => {
 			const prev = events[events.length - 1];
-			if (s.hold) {
-				if (prev && (opts.hold === "sustain" || prev.note === null)) prev.len++;
-				else events.push({ start: i, len: 1, note: null });
+			const extend = s.hold
+				? prev && (opts.hold === "sustain" || prev.note === null)
+				: s.rest && prev && prev.note === null;
+			if (extend) {
+				prev.len += s.t;
+				prev.line = s.line;
 			} else {
-				events.push({ start: i, len: 1, note: s });
+				events.push({ start: at, len: s.t, note: s.hold || s.rest ? null : s, line: s.line });
 			}
+			at += s.t;
+		});
+
+		// กลุ่มโน้ตใน [ ] ที่มีโน้ตตั้งแต่ 2 ตัวขึ้นไป ใส่เส้นโค้ง (slur)
+		const slurCount = {};
+		events.forEach(ev => {
+			if (ev.note && ev.note.slur) slurCount[ev.note.slur] = (slurCount[ev.note.slur] || 0) + 1;
 		});
 
 		// 2) ตัดโน้ตตามเส้นกั้นห้องและจังหวะ
@@ -343,11 +417,24 @@ const THM2ABC = (() => {
 				chunks.push({
 					start: pos, len: take, note: ev.note,
 					tie: ev.note !== null && remain > 0,
-					bar: Math.floor(v / barLen)
+					bar: Math.floor(v / barLen),
+					line: ev.line
 				});
 				pos += take;
 			}
 		});
+
+		// ตำแหน่งเปิด/ปิดเส้นโค้ง
+		const slurOpen = new Set(), slurClose = new Set();
+		const seen = {};
+		chunks.forEach((c, i) => {
+			const k = c.note && c.note.slur;
+			if (!k || slurCount[k] < 2) return;
+			if (!(k in seen)) slurOpen.add(i);
+			seen[k] = i;
+		});
+		Object.values(seen).forEach(i => slurClose.add(i));
+		chunks.forEach((c, i) => { c.idx = i; });
 
 		// 3) จัดกลุ่มเป็นห้อง
 		const bars = [];
@@ -365,16 +452,16 @@ const THM2ABC = (() => {
 			let out = "";
 			b.chunks.forEach((c, i) => {
 				if (i > 0 && (c.start + pad) % beatLen === 0) out += " ";
+				if (slurOpen.has(c.idx)) out += "(";
 				while (labels.length && labels[0].pos <= c.start) {
 					out += `"^${labels.shift().text}"`;
 				}
-				out += c.note === null ? "z" : pitchToAbc(c.note.deg, c.note.oct, opts);
+				out += c.note === null ? "z" : noteToAbc(c.note, opts);
 				out += lenStr(c.len);
 				if (c.tie) out += "-";
+				if (slurClose.has(c.idx)) out += ")";
 			});
-			const lastC = b.chunks[b.chunks.length - 1];
-			const endSlot = Math.min(lastC.start + lastC.len, n) - 1;
-			return { text: out, line: seg.slots[Math.max(endSlot, 0)].line };
+			return { text: out, line: b.chunks[b.chunks.length - 1].line };
 		});
 
 		// 4) ต่อห้อง + ขึ้นบรรทัดใหม่ตามบรรทัดของโน้ตไทย
@@ -392,7 +479,7 @@ const THM2ABC = (() => {
 	function convert(text, userOpts) {
 		const opts = Object.assign({
 			key: "C", octave: 0, unit: 16, groups: 2,
-			shift: true, hold: "sustain", tempo: 80, program: 13
+			shift: true, hold: "sustain", tempo: 80, program: 13, pair: "down"
 		}, userOpts);
 		// 1 ห้องไทย = 4 ช่อง
 		opts.barLen = 4 * opts.groups;
@@ -442,7 +529,8 @@ if (typeof module !== "undefined") module.exports = THM2ABC;
 			shift: document.getElementById("optShift").checked,
 			hold: val("optHold"),
 			tempo: +val("optTempo") || 80,
-			program: +val("optProgram")
+			program: +val("optProgram"),
+			pair: val("optPair")
 		};
 	}
 

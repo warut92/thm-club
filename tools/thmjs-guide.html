@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>วิธีพิมพ์โน้ต thmjs</title>
+	<link rel="stylesheet" href="../style.css">
+	<style>
+		@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Sarabun/Sarabun.css');
+		@import url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/TlwgTypist/TlwgTypist.css');
+		body {
+			font-family: "Sarabun", sans-serif;
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 8px 16px 40px;
+			line-height: 1.6;
+		}
+		pre, code {
+			font-family: "Tlwg Typist", monospace;
+		}
+		pre {
+			background-color: gainsboro;
+			color: black;
+			padding: 4px 8px;
+			white-space: pre-wrap;
+		}
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		th, td { padding: 2px 8px; text-align: left; }
+		.out { margin-bottom: 20px; overflow-x: auto; }
+		.out table { width: auto; font-family: "Tlwg Typist", monospace; }
+		.out td { padding: 4px 8px; white-space: nowrap; }
+		.out small { font-size: 80%; }
+		.out a { color: inherit; text-decoration: none; }
+		textarea {
+			width: 100%;
+			box-sizing: border-box;
+			font-family: "Tlwg Typist", monospace;
+			font-size: 15px;
+		}
+	</style>
+</head>
+<body>
+<a href="../index.html">หน้าหลัก</a>
+<hr>
+<h2>วิธีพิมพ์โน้ตดนตรีไทย ระบบ 1234 (thmjs)</h2>
+พิมพ์โน้ตเป็นตัวเลข แล้ว thm.js จะแปลงเป็นตารางโน้ต ด ร ม ฟ ซ ล ท<br>
+ตัวอย่างในหน้านี้ แถบสีเทาคือสิ่งที่พิมพ์ ตารางด้านล่างคือผลที่ได้
+<hr>
+
+<h3 id="history">ความเป็นมา</h3>
+<p>thmjs เริ่มสร้างเมื่อวันที่ 22 พฤศจิกายน 2566 (<a href="https://github.com/warut92/thmjs/">github.com/warut92/thmjs</a>)
+เพื่อให้พิมพ์โน้ตดนตรีไทยลงในไฟล์ html ได้ง่าย ๆ ด้วยตัวเลขบนแป้นพิมพ์ Numpad โดยไม่ต้องทำตารางเองใน Word หรือพิมพ์ตัว ด ร ม ฟ ทีละตัว<br>
+หลังจากนั้นในวันที่ 8 ธันวาคม 2566 ได้เริ่มทำเว็บไซต์รวมโน้ตชมรมดนตรีไทยนี้ขึ้น
+เพื่อให้นักเรียนเปิดดูโน้ตผ่านมือถือได้ทุกที่ ไม่ต้องพกกระดาษโน้ต</p>
+<hr>
+
+<b>หัวข้อ</b>
+<ol>
+	<li><a href="#basic">ตัวโน้ต</a></li>
+	<li><a href="#octave">เสียงสูง เสียงต่ำ</a></li>
+	<li><a href="#bar">ห้อง และการลากเสียง</a></li>
+	<li><a href="#title">ชื่อเพลง ข้อความ</a></li>
+	<li><a href="#layout">บรรทัด ตาราง กลับต้น</a></li>
+	<li><a href="#small">โน้ตตัวเล็ก [ ]</a></li>
+	<li><a href="#pair">เสียงคู่</a></li>
+	<li><a href="#marks">เครื่องหมายต่าง ๆ</a></li>
+	<li><a href="#summary">สรุป</a></li>
+	<li><a href="#page">ใช้ในหน้าเว็บ</a></li>
+	<li><a href="#play">ทดลองพิมพ์</a></li>
+	<li><a href="#online">ก่อนหน้านี้</a></li>
+</ol>
+
+<h3 id="basic">1. ตัวโน้ต</h3>
+<table>
+	<tr><td>พิมพ์</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+	<tr><td>ได้</td><td>ด</td><td>ร</td><td>ม</td><td>ฟ</td><td>ซ</td><td>ล</td><td>ท</td><td>ดํ</td><td>รํ</td></tr>
+</table>
+<p>8 กับ 9 ใช้แทน ดํ กับ รํ ได้เลย</p>
+<pre class="ex">5355 5655 8688 8988</pre>
+
+<h3 id="octave">2. เสียงสูง เสียงต่ำ</h3>
+<p><code>*</code> หลังโน้ต = เสียงสูง เช่น <code>3*</code> = มํ<br>
+<code>.</code> หลังโน้ต = เสียงต่ำ เช่น <code>6.</code> = ลฺ</p>
+<pre class="ex">-5.-6. -1-2 -3*-5* -9-8</pre>
+
+<h3 id="bar">3. ห้อง และการลากเสียง</h3>
+<p>1 ห้องมี 4 ตัว เว้นวรรคระหว่างห้อง ตัวสุดท้ายของห้องคือจังหวะตก<br>
+<code>-</code> = ลากเสียง หรือช่องว่าง<br>
+<code>x</code> = ตัวหยุด ถ้าจะหยุดนานขึ้นก็พิมพ์ x เพิ่ม เช่น <code>xx</code><br>
+(ในตารางโน้ต x จะแสดงเป็นตัว x แต่ในตัวแปลงเป็นโน้ตสากลจะเป็นตัวหยุด)</p>
+<pre class="ex">---2 ---3 ---4 ---5 -432 xxxx xxxx xxxx</pre>
+
+<h3 id="title">4. ชื่อเพลง ข้อความ</h3>
+<p><code>(ชื่อเพลง)</code> อยู่บรรทัดเดียว = ชื่อเพลง ห้ามเว้นวรรค ให้ใช้ <code>_</code> แทน<br>
+<code>[ข้อความ]</code> = ข้อความตัวเล็ก ใช้บอกท่อน เที่ยว ฯลฯ<br>
+<code>_</code> หรือ <code>\s</code> = ช่องว่าง<br>
+<code>%</code> หน้าตัวเลข = ให้แสดงเป็นตัวเลข เช่น <code>%1</code> (ถ้าไม่ใส่ 1 จะกลายเป็น ด)</p>
+<pre class="ex">(แขกบรเทศ_ชั้นเดียว)
+([ท่อน_%1])
+-666 -666 -555 -333</pre>
+
+<h3 id="layout">5. บรรทัด ตาราง กลับต้น</h3>
+<p>ขึ้นบรรทัดใหม่ = แถวใหม่<br>
+เว้นบรรทัดว่าง = ขึ้นตารางใหม่<br>
+<code>//</code> อยู่บรรทัดเดียว = กลับต้น<br>
+<code>next</code> อยู่บรรทัดเดียว = ขึ้นหน้าใหม่ตอนสั่งพิมพ์</p>
+<pre class="ex">([ท่อน_%1])
+-666 -666 -555 -333 -5-8 -2*-3* -5*-3* -9-8
+//
+
+([ท่อน_%2])
+-3*-9 -8-6 -356 -8-9 -5-8 -2*-3* -5*-3* -9-8
+//</pre>
+
+<h3 id="small">6. โน้ตตัวเล็ก [ ]</h3>
+<p>โน้ตในวงเล็บเหลี่ยม (ไม่เกิน 5 ตัว) จะแสดงตัวเล็กและมีเส้นโค้งด้านบน<br>
+<code>[ ]</code> = ยาวครึ่งหนึ่ง (2 ตัว = 1 ช่อง)<br>
+<code>[[ ]]</code> = ยาว 1/4 (4 ตัว = 1 ช่อง)<br>
+ถ้าแปลงเป็นโน้ตสากลโดยตั้ง 1 ตัว = เขบ็ต 1 ชั้น โน้ตใน [ ] จะเป็นเขบ็ต 2 ชั้น ใน [[ ]] เป็นเขบ็ต 3 ชั้น</p>
+<pre class="ex">--[12]3 --[23]5 --[35]6 --[56]8</pre>
+
+<h3 id="pair">7. เสียงคู่</h3>
+<p>พิมพ์ <code>/</code> ตามด้วยตัวเลขหลังโน้ต = ตีคู่พร้อมกัน ตัวเลขจะอยู่ใต้โน้ต สำหรับโน้ตประเภทเครื่องตี<br>
+เช่น <code>8/8</code> = ดํ คู่ 8, <code>5/4</code> = ซ คู่ 4<br>
+เลข 10–16 ใส่วงเล็บ เช่น <code>3*/(10)</code><br>
+ทางลัด <code>$</code> = /8, <code>f</code> = /4<br>
+ถ้ามี * หรือ . ให้พิมพ์ก่อนทับ เช่น <code>3*/8</code></p>
+<pre class="ex">-5/4-8/8 --93*/8 -3*/6-3*/8 -9/8-8/8</pre>
+<pre class="ex">-3/2-7. 32/4-3/4 -6/8-5. 55-6/8</pre>
+<pre class="ex">-234 -6-3 -6/5-4 32-7/8</pre>
+
+<h3 id="marks">8. เครื่องหมายต่าง ๆ</h3>
+<p>พิมพ์ต่อท้ายโน้ต ใส่ได้ 1 เครื่องหมายต่อโน้ต 1 ตัว</p>
+
+<p><b>ซอ</b><br>
+<code>{</code> = คันชักออก, <code>}</code> = คันชักเข้า<br>
+<code>\๑</code> ถึง <code>\๙</code>, <code>\ช</code> <code>\ก</code> <code>\น</code> = ตำแหน่งนิ้ว (บนโน้ต)<br>
+<code>\i</code> <code>\ii</code> <code>\iii</code> = ตำแหน่งนิ้วเป็นเลข 1 2 3 (บนโน้ต), <code>/i</code> <code>/ii</code> = ใต้โน้ต</p>
+<pre class="ex">-1{-2} -3\๑-5\๒ -6\ii-5\i -3/ii-2/i</pre>
+
+<p><b>จะเข้ ขิม</b><br>
+<code>v</code> = ดีดเข้า, <code>^</code> = ดีดออก<br>
+<code>\+</code> หรือ <code>/+</code> = + ใต้โน้ต (สายลวดจะเข้ / มือขวาขิม)</p>
+<pre class="ex">-1v-2^ -3v-5^ -6\+-5 -3/+-2</pre>
+
+<p><b>อื่น ๆ</b><br>
+<code>+</code> = โน้ตบวก, <code>=</code> = โน้ตลบ, <code>o</code> = โน้ตกลาง<br>
+<code>t</code> = พรม<br>
+<code>q</code> ใส่หน้าโน้ต สำหรับเป็นเครื่องหมายพิเศษ = 🏵 เช่น <code>q5</code></p>
+<pre class="ex">-1+-2= -3o-5t -6-q5 ---1</pre>
+
+<h3 id="summary">9. สรุป</h3>
+<table>
+	<tr><th>พิมพ์</th><th>ความหมาย</th></tr>
+	<tr><td>1 2 3 4 5 6 7</td><td>ด ร ม ฟ ซ ล ท</td></tr>
+	<tr><td>8 9</td><td>ดํ รํ</td></tr>
+	<tr><td>* .</td><td>เสียงสูง เสียงต่ำ</td></tr>
+	<tr><td>-</td><td>ลากเสียง / ช่องว่าง</td></tr>
+	<tr><td>x</td><td>ตัวหยุด</td></tr>
+	<tr><td>เว้นวรรค</td><td>คั่นห้อง</td></tr>
+	<tr><td>(ชื่อ)</td><td>ชื่อเพลง</td></tr>
+	<tr><td>[ข้อความ]</td><td>ข้อความตัวเล็ก</td></tr>
+	<tr><td>[โน้ต] [[โน้ต]]</td><td>โน้ตตัวเล็ก ยาว 1/2 และ 1/4</td></tr>
+	<tr><td>%เลข</td><td>แสดงตัวเลข</td></tr>
+	<tr><td>_ \s</td><td>ช่องว่าง</td></tr>
+	<tr><td>//</td><td>กลับต้น</td></tr>
+	<tr><td>บรรทัดว่าง</td><td>ตารางใหม่</td></tr>
+	<tr><td>next</td><td>หน้าใหม่ (ตอนพิมพ์)</td></tr>
+	<tr><td>/เลข /(เลข)</td><td>เสียงคู่</td></tr>
+	<tr><td>$ f</td><td>คู่ 8, คู่ 4</td></tr>
+	<tr><td>{ }</td><td>คันชักออก, คันชักเข้า</td></tr>
+	<tr><td>\๑ \ช \iii</td><td>ตำแหน่งนิ้ว (บน)</td></tr>
+	<tr><td>/iii</td><td>ตำแหน่งนิ้ว (ล่าง)</td></tr>
+	<tr><td>v ^</td><td>ดีดเข้า, ดีดออก</td></tr>
+	<tr><td>\+ /+</td><td>สายลวดจะเข้ / มือซ้ายขิม</td></tr>
+	<tr><td>+ = o</td><td>โน้ตบวก, โน้ตลบ, โน้ตกลาง</td></tr>
+	<tr><td>t</td><td>พรม</td></tr>
+	<tr><td>q</td><td>🏵 (หน้าโน้ตบอกสัญลักษณ์พิเศษ)</td></tr>
+</table>
+
+<h3 id="page">10. ใช้ในหน้าเว็บ</h3>
+<p>ใส่โน้ตใน <code>&lt;div id="thm"&gt;</code> แล้วเรียก thm.js ท้ายหน้า ดูตัวอย่างที่ <a href="../0-blank_tmp.html">0-blank_tmp.html</a></p>
+<pre>&lt;link rel="stylesheet" href="https://warut92.github.io/thmjs/thmjs.css"&gt;
+
+&lt;div id="thm"&gt;
+(ชื่อเพลง)
+([ท่อน_%1])
+-666 -666 -555 -333
+//
+&lt;/div&gt;
+
+&lt;script src="../scripts/thm.js@0.0.2"&gt;&lt;/script&gt;</pre>
+<p>แปลงเป็นโน้ตสากลได้ที่ <a href="thm2abcjs.html">thm2abcjs</a></p>
+
+<h3 id="play">11. ทดลองพิมพ์</h3>
+<textarea id="playIn" rows="6" spellcheck="false">(แขกบรเทศ_ชั้นเดียว)
+([ท่อน_%1])
+-666 -666 -555 -333 -5-8 -2*-3* -5*-3* -9-8
+//</textarea>
+<div id="playOut" class="out"></div>
+
+<h3 id="online">12. ก่อนหน้านี้</h3>
+ก่อนหน้าการสร้าง thmjs ผมได้พยายามสร้างตัวเล่นโน้ตดนตรีไทยผ่านเว็บ ท่านสามารถทดลองเล่นได้ที่ <a href="https://music.warut.net/thai-note" target="_blank" rel="noopener noreferrer">ดรมฟ online</a>
+<hr>
+<a href="https://github.com/warut92/thmjs/">thm.js</a> โดย ครูวรุฒ<br>
+<a href="../index.html">กลับหน้าหลัก</a>
+
+<script>
+// แสดงผลตัวอย่างด้วย thm.js
+// thm.js ใช้ได้กับ id="thm" ทีละตัว จึงโหลดโค้ดมาแล้วเรียกซ้ำทีละตัวอย่าง
+(async () => {
+	const examples = [...document.querySelectorAll("pre.ex")].map(pre => {
+		const out = document.createElement("div");
+		out.className = "out";
+		pre.after(out);
+		return { code: pre.textContent, target: out };
+	});
+
+	let thm = null;
+	try {
+		const res = await fetch("../scripts/thm.js@0.0.2");
+		if (!res.ok) throw new Error(res.status);
+		thm = new Function(await res.text());
+	} catch (e) {
+		const msg = "(แสดงผลไม่ได้ ต้องเปิดผ่านเว็บไซต์)";
+		examples.forEach(ex => { ex.target.textContent = msg; });
+		document.getElementById("playOut").textContent = msg;
+		return;
+	}
+
+	function render(code, target) {
+		target.id = "thm";
+		target.textContent = code;
+		try {
+			thm();
+		} catch (e) {
+			target.textContent = "ผิดพลาด: " + e.message;
+		}
+		target.removeAttribute("id");
+		// กันไม่ให้ thm.js วาดเส้นโค้งซ้ำในตัวอย่างอื่น
+		target.querySelectorAll(".sabat").forEach(el => el.className = "sabat-done");
+		applyPanel();
+	}
+
+	// ตารางสร้างทีหลัง panel-center.js จึงต้องใส่ฟอนต์และสีเส้นตารางที่เลือกไว้ให้ใหม่
+	function applyPanel() {
+		if (typeof applyFonts === "function") applyFonts();
+		let border = null;
+		try { border = localStorage.getItem("tableBorderColor"); } catch (e) {}
+		if (border && typeof applyTableBorder === "function") applyTableBorder(border);
+	}
+
+	examples.forEach(ex => render(ex.code, ex.target));
+
+	const input = document.getElementById("playIn");
+	const output = document.createElement("div");
+	document.getElementById("playOut").appendChild(output);
+	let timer = null;
+	const update = () => render(input.value, output);
+	input.addEventListener("input", () => {
+		clearTimeout(timer);
+		timer = setTimeout(update, 150);
+	});
+	update();
+})();
+</script>
+<script src="../scripts/panel-center.js"></script>
+
+</body>
+</html>
