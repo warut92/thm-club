@@ -43,6 +43,19 @@
 	
 	let FULLYEAR = fullDate.getFullYear() + 543
 	document.getElementById("dateTime").innerHTML = fullDate.toLocaleDateString('th-TH', options) + " พ.ศ. " + FULLYEAR;
-	
+
+	// หน้านี้ไม่มี panel-center.js จึงดึงสีที่เลือกไว้จาก localStorage มาใช้เอง
+	try {
+		const bg = localStorage.getItem("bgColor");
+		const border = localStorage.getItem("tableBorderColor");
+		const fontColor = localStorage.getItem("fontColor");
+		if (bg) {
+			document.body.style.backgroundColor = bg;
+			document.documentElement.style.setProperty("--panel-base", bg);
+		}
+		if (border) document.documentElement.style.setProperty("--panel-border", border === "transparent" ? "#999" : border);
+		if (fontColor) document.body.style.color = fontColor;
+	} catch (e) {}
+
 	</script>
 </html>
