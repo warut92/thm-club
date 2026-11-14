@@ -16,17 +16,22 @@
   }
   table {
     border-collapse: collapse;
-    width: 500px;
+    max-width: 100%;
   }
   th, td {
     border: 1px solid #999;
     padding: 8px;
     text-align: center;
   }
-  tr:hover {
+  td.note:hover {
     background-color: greenyellow;
     color: black;
     cursor: pointer;
+  }
+  td.note.off {
+    color: #ccc;
+    background-color: #f5f5f5;
+    pointer-events: none;
   }
   th {
     background-color: #ddd;
@@ -45,7 +50,7 @@
   <option value="15,12,8">จะเข้</option>
   <option value="12,16">ซอด้วง</option>
   <option value="8,12">ซออู้</option>
-  <option value="6,9,12">ซอสามสาย</option>
+  <option value="13,16,19">ซอสามสาย</option>
   <option value="15,16,17,18,19,20,21,22,23,24,25,26">ขลุ่ยเพียงออ</option>
   <option value="23">กลองสองหน้า</option>
 </select>
@@ -55,21 +60,26 @@
 <table id="noteTable">
   <thead>
     <tr>
-      <th>ชื่อโน้ต</th>
-      <th>ช่วงเสียงที่</th>
-      <th>ความถี่ (Hz)</th>
+      <th>ช่วงเสียง</th>
+      <th>ด</th>
+      <th>ร</th>
+      <th>ม</th>
+      <th>ฟ</th>
+      <th>ซ</th>
+      <th>ล</th>
+      <th>ท</th>
     </tr>
   </thead>
   <tbody></tbody>
-  <br>
+</table>
+<br>
 
 <button onclick="toggleMic()" id="micBtn">🎤 เปิดตัวฟังความถี่</button>
 <div id="visual" style="display: none;">
   <div>ความถี่: <span id="freqDisplay">-</span> Hz</div>
   <canvas id="waveCanvas" width="500" height="150"></canvas>
 </div>
-
-</table>
+<br>
 
 เสียงกรมศิลป์อ้างอิงจาก <a href="https://www.facebook.com/100060031846270/posts/%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%AA%E0%B8%B3%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B8%B1%E0%B8%87%E0%B8%84%E0%B8%B5%E0%B8%95-%E0%B9%80%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%AA%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%95%E0%B9%89%E0%B8%99%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%94%E0%B8%99%E0%B8%95%E0%B8%A3%E0%B8%B5%E0%B9%84%E0%B8%97%E0%B8%A2-%E0%B8%AA%E0%B8%B3%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%A3/359095596101499/">ประกาศสำนักการสังคีต เรื่อง ประกาศใช้มาตรฐานเสียงตั้งต้นเครื่องดนตรีไทย (facebook)</a>
 <br>
@@ -146,26 +156,33 @@ const data = `
 
 const tbody = document.querySelector("#noteTable tbody");
 
+// จัดเป็นแถวละช่วงเสียง (ด - ท ในแนวนอน)
+const rowsByLevel = {};
+
 data.trim().split("\n").forEach((line, index) => {
-  const [note, level, freq] = line.split(/\s+/);
+  const [note, rawLevel, freq] = line.split(/\s+/);
+  const level = parseInt(rawLevel) + 4; // แสดงเลขช่วงเสียงเริ่มที่ 4 (0 = 4, 1 = 5, ...)
 
-  const tr = document.createElement("tr");
+  if (!rowsByLevel[level]) {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.textContent = level;
+    tr.appendChild(th);
+    tbody.appendChild(tr);
+    rowsByLevel[level] = tr;
+  }
 
-  tr.id = index + 1
-console.log(note);
-  tr.innerHTML = `
-    <td>${note}</td>
-    <td>${level}</td>
-    <td>${freq}</td>
-  `;
+  const td = document.createElement("td");
+  td.className = "note";
+  td.id = index + 1;
+  td.title = `${note} ช่วงเสียงที่ ${level}`;
+  td.textContent = freq;
 
-  tr.addEventListener("click", () => {
+  td.addEventListener("click", () => {
     playTone(parseFloat(freq));
   });
-  // tr.addEventListener("touchstart", () => {
-  //   playTone(parseFloat(freq));
-  // });
-  tbody.appendChild(tr);
+
+  rowsByLevel[level].appendChild(td);
 });
 
 function playTone(frequency) {
@@ -230,18 +247,17 @@ document.querySelectorAll(".ratioBtn").forEach(button => {
 });
 
 function filterRows(idArray) {
-  const rows = document.querySelectorAll("#noteTable tbody tr");
+  const cells = document.querySelectorAll("#noteTable td.note");
 
-  rows.forEach(row => {
-    const rowId = parseInt(row.id);
-
-    row.style.display = idArray.includes(rowId) ? "" : "none";
+  cells.forEach(cell => {
+    const cellId = parseInt(cell.id);
+    cell.classList.toggle("off", !idArray.includes(cellId));
   });
 }
 
 function showAll() {
-  const rows = document.querySelectorAll("#noteTable tbody tr");
-  rows.forEach(row => row.style.display = "");
+  const cells = document.querySelectorAll("#noteTable td.note");
+  cells.forEach(cell => cell.classList.remove("off"));
 }
 </script>
 
