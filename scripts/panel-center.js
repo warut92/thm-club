@@ -95,6 +95,18 @@ btn.addEventListener("click", () => onClick(color));
 return btn;
 }
 
+// สี panel อ้างอิงสีพื้นหลัง (CSS ทำให้เข้มขึ้นเล็กน้อย) และสีห้องโน้ต
+function updatePanelColors() {
+const root = document.documentElement.style;
+const bg = localStorage.getItem("bgColor");
+const border = localStorage.getItem("tableBorderColor");
+if (bg) root.setProperty("--panel-base", bg);
+else root.removeProperty("--panel-base");
+// ห้องโน้ตแบบไม่มีเส้น ใช้เส้นสีเทาให้ยังเห็นขอบ panel
+if (border) root.setProperty("--panel-border", border === "transparent" ? "#999" : border);
+else root.removeProperty("--panel-border");
+}
+
 // ใส่สีและจำค่า: "default" = ล้างสีที่ตั้งไว้ และลบค่าที่จำไว้
 function applyBgColor(color) {
 if (color === "default") {
@@ -104,6 +116,7 @@ localStorage.removeItem("bgColor");
 document.body.style.backgroundColor = color;
 localStorage.setItem("bgColor", color);
 }
+updatePanelColors();
 }
 
 const bgColors = [
@@ -220,6 +233,7 @@ const borderColors = [
         applyTableBorder(color);
 
         localStorage.setItem("tableBorderColor", color);
+        updatePanelColors();
         
         });
         
@@ -245,6 +259,8 @@ const savedBorder = localStorage.getItem("tableBorderColor");
 if (savedBorder) {
 applyTableBorder(savedBorder);
 }
+
+updatePanelColors();
 
 // =========================
 // 🔹 APPEND TO PANEL

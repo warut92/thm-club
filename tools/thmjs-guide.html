@@ -46,18 +46,19 @@
 <a href="../index.html">หน้าหลัก</a>
 <hr>
 <h2>วิธีพิมพ์โน้ตดนตรีไทย ระบบ 1234 (thmjs)</h2>
-พิมพ์โน้ตเป็นตัวเลข แล้ว thm.js จะแปลงเป็นตารางโน้ต ด ร ม ฟ ซ ล ท<br>
+พิมพ์โน้ตเป็นตัวเลขในไฟล์ html แล้ว thm.js จะแปลงเป็นตารางโน้ต ด ร ม ฟ ซ ล ท<br>
 ตัวอย่างในหน้านี้ แถบสีเทาคือสิ่งที่พิมพ์ ตารางด้านล่างคือผลที่ได้
 <hr>
 
 <h3 id="history">ความเป็นมา</h3>
 <p>thmjs เริ่มสร้างเมื่อวันที่ 22 พฤศจิกายน 2566 (<a href="https://github.com/warut92/thmjs/">github.com/warut92/thmjs</a>)
 เพื่อให้พิมพ์โน้ตดนตรีไทยลงในไฟล์ html ได้ง่าย ๆ ด้วยตัวเลขบนแป้นพิมพ์ Numpad โดยไม่ต้องทำตารางเองใน Word หรือพิมพ์ตัว ด ร ม ฟ ทีละตัว<br>
+โดยได้ประยุกต์แนวคิดวิธีการมาจาก <a href="http://dev.music.free.fr/web-demo/$ABC_UI.html" target="_blank" rel="noopener noreferrer">$ABC_UI</a>
 หลังจากนั้นในวันที่ 8 ธันวาคม 2566 ได้เริ่มทำเว็บไซต์รวมโน้ตชมรมดนตรีไทยนี้ขึ้น
 เพื่อให้นักเรียนเปิดดูโน้ตผ่านมือถือได้ทุกที่ ไม่ต้องพกกระดาษโน้ต</p>
 <hr>
 
-<b>หัวข้อ</b>
+<b>สารบาญ</b>
 <ol>
 	<li><a href="#basic">ตัวโน้ต</a></li>
 	<li><a href="#octave">เสียงสูง เสียงต่ำ</a></li>
@@ -139,7 +140,17 @@
 <code>{</code> = คันชักออก, <code>}</code> = คันชักเข้า<br>
 <code>\๑</code> ถึง <code>\๙</code>, <code>\ช</code> <code>\ก</code> <code>\น</code> = ตำแหน่งนิ้ว (บนโน้ต)<br>
 <code>\i</code> <code>\ii</code> <code>\iii</code> = ตำแหน่งนิ้วเป็นเลข 1 2 3 (บนโน้ต), <code>/i</code> <code>/ii</code> = ใต้โน้ต</p>
-<pre class="ex">-1{-2} -3\๑-5\๒ -6\ii-5\i -3/ii-2/i</pre>
+<pre class="ex">-1}-2{ -3\๑-5\๒ -6\ii-5\i -3/ii-2/i</pre>
+
+<p><b>แสดงคันชักเป็นเส้นโค้ง (th-bow.js)</b><br>
+ปกติ <code>{</code> <code>}</code> จะแสดงเป็นเครื่องหมาย &lt; &gt; ใต้โน้ต ถ้าเรียก th-bow.js ต่อจาก thm.js จะเปลี่ยนเป็นเส้นโค้งคันชัก<br>
+มีปุ่ม 🏹 มุมจอ สำหรับเลือกระบบคันชัก (&gt;&lt; หรือเส้นโค้ง) และปรับความหนา ความกว้าง ตำแหน่งของเส้นโค้ง</p>
+<pre>&lt;script src="../scripts/thm.js@0.0.2"&gt;&lt;/script&gt;
+&lt;script src="../scripts/th-bow.js"&gt;&lt;/script&gt;</pre>
+<p>ตัวอย่าง ไม่ใช้ th-bow.js</p>
+<pre class="ex">-1{-2} -3{-5} -6{-5{ -3}-2}</pre>
+<p>ตัวอย่าง ใช้ th-bow.js</p>
+<pre class="ex bow">-1}-2{ -3}-5{ --56 5{3}-2{</pre>
 
 <p><b>จะเข้ ขิม</b><br>
 <code>v</code> = ดีดเข้า, <code>^</code> = ดีดออก<br>
@@ -216,8 +227,30 @@
 		const out = document.createElement("div");
 		out.className = "out";
 		pre.after(out);
-		return { code: pre.textContent, target: out };
+		return { code: pre.textContent, target: out, bow: pre.classList.contains("bow") };
 	});
+
+	// วาดคันชักแบบเส้นโค้ง ใช้ค่าเริ่มต้นเดียวกับ th-bow.js
+	// (th-bow.js ใช้ได้กับ id="thm" ตัวเดียวและสร้างปุ่ม 🏹 จึงเขียนส่วนแปลงไว้ที่นี่)
+	function applyBow(target) {
+		const curve = (style, w, h, d, sw) =>
+			`<svg style="position:absolute; ${style}" width="${w}" height="${h}" viewBox="0 0 35 20">` +
+			`<path d="${d}" stroke="currentColor" stroke-width="${sw}" fill="none"/></svg>`;
+		const path = "M12 19 Q19 8 26 19";
+		const bowOut = curve("top:5px; left:-6px; transform:rotate(180deg);", 26, 40, path, 1.5);
+		const bowIn = curve("top:-20px; left:-8px;", 26, 40, path, 1.5);
+		const bowIn2 = curve("top:-30%; left:-20%;", 35, 40, "M2 18 Q17 2 33 18", 1.5);
+		const sub = mark => `<sub style="position: absolute; bottom: -0\\.5em; left: 50%; transform: translateX\\(-50%\\);">${mark}<\\/sub>`;
+		const cell = `<\\/span><\\/td><td><span style="display: inline-block; position: relative;">`;
+		let html = target.innerHTML;
+		html = html.replace(new RegExp(sub("&gt;"), "g"), bowOut);
+		html = html.replace(
+			new RegExp(`([ดรมฟซลท])${sub("&lt;")}${cell}([ดรมฟซลท])${sub("&lt;")}`, "g"),
+			`$1</span></td><td><span style="display: inline-block; position: relative;">${bowIn2}$2`
+		);
+		html = html.replace(new RegExp(sub("&lt;"), "g"), bowIn);
+		target.innerHTML = html;
+	}
 
 	let thm = null;
 	try {
@@ -231,7 +264,7 @@
 		return;
 	}
 
-	function render(code, target) {
+	function render(code, target, bow) {
 		target.id = "thm";
 		target.textContent = code;
 		try {
@@ -242,6 +275,7 @@
 		target.removeAttribute("id");
 		// กันไม่ให้ thm.js วาดเส้นโค้งซ้ำในตัวอย่างอื่น
 		target.querySelectorAll(".sabat").forEach(el => el.className = "sabat-done");
+		if (bow) applyBow(target);
 		applyPanel();
 	}
 
@@ -253,7 +287,7 @@
 		if (border && typeof applyTableBorder === "function") applyTableBorder(border);
 	}
 
-	examples.forEach(ex => render(ex.code, ex.target));
+	examples.forEach(ex => render(ex.code, ex.target, ex.bow));
 
 	const input = document.getElementById("playIn");
 	const output = document.createElement("div");
